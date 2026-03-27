@@ -1,0 +1,14 @@
+//-----------------------------------------------------------\\
+|| V All Strings for the Wait Menu                         V ||
+\\-----------------------------------------------------------//
+$SKYB_Confirm	Confirm
+$SKYB_Cancel	Cancel
+$SKYB_HOUR	HOUR(S)
+$SKYB_DAY	DAY(S)
+$SKYB_REST	REST
+$SKYB_WAIT	WAIT
+$SKYB_SwitchDay	Days
+$SKYB_SwitchHour	Hours
+
+$SKYB_AM	上午
+$SKYB_PM	下午

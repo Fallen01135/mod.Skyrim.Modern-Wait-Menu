@@ -1,0 +1,14 @@
+//-----------------------------------------------------------\\
+|| V All Strings for the Wait Menu                         V ||
+\\-----------------------------------------------------------//
+$TES4_Confirm	Bestätigen
+$TES4_Cancel	Abbrechen
+$TES4_HOUR	STUNDE(N)
+$SKYB_DAY	TAG(E)
+$TES4_REST	RASTE
+$TES4_WAIT	WARTE
+$SKYB_SwitchDay	Tage
+$SKYB_SwitchHour	Stunden
+
+$TES4_AM	AM
+$TES4_PM	PM
