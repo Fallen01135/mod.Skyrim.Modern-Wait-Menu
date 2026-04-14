@@ -1,0 +1,8 @@
+//-----------------------------------------------------------\\
+|| V All Strings for the Wait Menu                         V ||
+\\-----------------------------------------------------------//
+$fta_Confirm	Confirm
+$fta_Cancel	Cancel
+$fta_HOUR	HOUR(S)
+$fta_REST	REST
+$fta_WAIT	WAIT

@@ -1,0 +1,61 @@
+#pragma once
+
+namespace ModernWaitMenu
+{
+	class WeatherManager
+	{
+	private:
+		// For me: inline static is technically the same as in Java static
+		inline static RE::TESWeather* lastWeather = nullptr;
+
+	public:
+		/**
+		* @brief Updates the Weather of the Wait Menu.
+		* 
+		* It will send the collected informations into the Wait menu.
+		* 
+		* @param a_view The Flash-Movie-Pointer of the Menu.
+		* @param a_force If true, the update will be forced even without any weather change.
+		*/
+		static void updateCurrentWeather(RE::GFxMovieView* a_view, bool a_force);
+	};
+
+	class TimeManager
+	{
+	private:
+		inline static int lastHours = -1;
+		inline static int lastMinutes = -1;
+
+	public:
+		/**
+		* @brief Updates the Time and date of the Wait Menu.
+		* 
+		* It will send the collected informations into the Wait menu.
+		* 
+		* @param a_view The Flash-Movie-Pointer of the Menu.
+		* @param a_force If true, the update will be forced even without any Time change.
+		*/
+		static void UpdateMenuTime(RE::GFxMovieView* a_view, bool a_force);
+	};
+
+	class ControllManager
+	{
+	private:
+		inline static float lastLX = 0.0f, lastLY = 0.0f;
+		inline static float lastRX = 0.0f, lastRY = 0.0f;
+
+	public:
+		/**
+		* @brief This sends controller stick information to the Menu
+		*
+		* As AS2 does not have any controller support, we need to make it.
+		* For this, we gather the controller information from the standard library and send
+		* it to the menu. We only send the infos when the stick position was changed.
+		*
+		* @param a_view The Flash-Movie-Pointer of the Menu.
+		* @param location This is the "path" inside the menu file to the function that should be called.
+		* @param left If this should send the Left or Right stick information to the menu.
+		*/
+		static void sendStickInformation(RE::GFxMovieView* a_view, const char* location, bool left);
+	};
+}
