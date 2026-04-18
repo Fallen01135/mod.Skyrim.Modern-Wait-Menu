@@ -1,5 +1,6 @@
 #include "Hooks.h"
 #include "Utilities.h"
+#include "logger.h"
 
 namespace ModernWaitMenu
 {
@@ -8,12 +9,14 @@ namespace ModernWaitMenu
 		if (a_message.type == RE::UI_MESSAGE_TYPE::kUpdate && a_this && a_this->uiMovie)
 		{
 			auto view = a_this->uiMovie.get();
-			if (!view)
-				return _ProcessMessage(a_this, a_message);
-
-			ModernWaitMenu::TimeManager::UpdateMenuTime(view, false);
-			ModernWaitMenu::WeatherManager::updateCurrentWeather(view, false);
-			ModernWaitMenu::ControllManager::sendStickInformation(view, "_root.SleepWaitMenu_mc.onStickLeft", true);
+			if (view)
+			{
+				ModernWaitMenu::TimeManager::UpdateMenuTime(view, false);
+				ModernWaitMenu::WeatherManager::updateCurrentWeather(view, false);
+				ModernWaitMenu::ControllManager::sendStickInformation(view, "_root.SleepWaitMenu_mc.onStickLeft", true);
+			}
+			else
+				MWM_LOG_DEBUG("Menu not found, skipping");
 		}
 
 		return _ProcessMessage(a_this, a_message);

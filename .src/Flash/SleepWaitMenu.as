@@ -4,9 +4,12 @@ import gfx.ui.NavigationCode;
 
 import mx.utils.Delegate;
 
+import SKYB.Utility;
+
 
 class SleepWaitMenu extends MovieClip
 {
+	// General
 	public var HoursSlider: MovieClip;
 	public var HoursText: TextField;
 	public var CurrentTime: TextField;
@@ -16,7 +19,7 @@ class SleepWaitMenu extends MovieClip
 	private var iconWeather: MovieClip;
 	private var container: MovieClip;
 	private var bar: MovieClip;
-	private var barBackground: MovieClip;
+	private var hitbox: MovieClip;
 	private var progressBar: MovieClip;
 	private var cursor: MovieClip;
 
@@ -26,14 +29,12 @@ class SleepWaitMenu extends MovieClip
 	private var WaitTime: TextField;
 	private var QuestionInstance: TextField;
 
-	private var minute: Number = 0;
-	private var iHour: Number = 0;
-	private var hours: Number = 1;
-	private var iOldClickHour: Number = 0;
+	private var minute: String = "";
 
-	private var bWaiting: Boolean = false;
-	private var bDoOnce: Boolean = false;
-	private var bInArea: Boolean = false;
+	private var currentHour: Number = 0;
+	private var waitCounter: Number = 0;
+
+	private var isWaiting: Boolean = false;
 
 	// Set by DLL
 	public var is24Clock: Boolean = false;
@@ -42,7 +43,18 @@ class SleepWaitMenu extends MovieClip
 	public var suffixPM: String = "";
 	// ----------
 
+	// onMouseMove()
+	private var bInArea: Boolean = false;
+
+	// changeWaitTime()
+	private var iOldClickHour: Number = 0;
+	
+	// setTimeAndDate()
+	private var bDoOnce: Boolean = false;
+
+	// Controlled by getter and setter functions
 	private var _disableControls: Boolean = false;
+	private var _waitHours: Number = 1;
 
 
 	public function SleepWaitMenu()
@@ -60,18 +72,13 @@ class SleepWaitMenu extends MovieClip
 		ButtonRect.AcceptMouseButton.SetPlatform(0, false);
 		ButtonRect.CancelMouseButton.SetPlatform(0, false);
 
-		HoursSlider.addEventListener("change", this, "sliderChange");
-		HoursSlider.scrollWheel = function ()
-		{
-		};
-
 		ButtonRect.AcceptMouseButton.addEventListener("click", this, "onOKPress");
 		ButtonRect.CancelMouseButton.addEventListener("click", this, "onCancelPress");
-		barBackground.onRollOver = barBackground.onRollOut = Delegate.create(this, handleRollActions);
-		barBackground.onRelease = Delegate.create(this, onBarRelease);
+		hitbox.onRollOver = hitbox.onRollOut = Delegate.create(this, handleRollActions);
+		hitbox.onRelease = Delegate.create(this, onBarRelease);
 
-		container = progressBar.bar.createEmptyMovieClip("bar", this.getNextHighestDepth());
-		container.setMask(progressBar.bar.mask);
+		container = progressBar.bar.mask;
+		progressBar.bar.fill.setMask(container);
 	}
 
 	public function SetPlatform(aiPlatformIndex: Number, abPS3Switch: Boolean): Void
@@ -100,21 +107,15 @@ class SleepWaitMenu extends MovieClip
 		return _disableControls;
 	}
 
-	public function setSliderValue(value: Number): Void
+	public function set waitHours(value: Number): Void
 	{
-		HoursSlider.value = value;
-		sliderChange();
+		_waitHours = Utility.clamp(value, 0, 24);
+		updateWaitTime();
 	}
 
-	public function modifySliderValue(aiDelta: Number): Void
+	public function get waitHours(): Number
 	{
-		HoursSlider.value += aiDelta;
-		sliderChange();
-	}
-
-	public function getSliderValue(): Number
-	{
-		return Math.floor(HoursSlider.value);
+		return _waitHours;
 	}
 
 
@@ -139,7 +140,7 @@ class SleepWaitMenu extends MovieClip
 
 		return true;
 	}
-	
+
 	private function onMouseMove(): Void
 	{
 		if (bInArea)
@@ -148,12 +149,13 @@ class SleepWaitMenu extends MovieClip
 			cursor._y = _ymouse;
 		}
 
-		if (!bWaiting && bInArea)
+		if (!isWaiting && bInArea)
 		{
 			var barCenterX: Number = progressBar._x;
 			var barCenterY: Number = progressBar._y;
 			var angle: Number = Math.atan2(_ymouse - barCenterY, _xmouse - barCenterX) * 180 / Math.PI;
-			var clickHour: Number = Math.round(((angle + 90) % 360) * 24 / 360);
+
+			var clickHour: Number = Math.round(((angle - 90) % 360) * 24 / 360);
 			if (clickHour <= 0)
 				clickHour += 24;
 			
@@ -164,22 +166,26 @@ class SleepWaitMenu extends MovieClip
 	private function onMouseWheel(aiWheelVal: Number): Void
 	{
 		if (!disableControls)
+		{
+			waitHours += aiWheelVal;
 			modifySliderValue(aiWheelVal);
+		}
 	}
 
 	// DLL Call
 	public function onStickLeft(afX: Number, afY: Number): Void
 	{
 		var magnitude: Number = Math.sqrt(afX * afX + afY * afY);
+		// Only allow input when the stick is almost tilted to the max
 		if (magnitude < 0.9)
 			return;
 
-		if (!bWaiting && !disableControls)
+		if (!isWaiting && !disableControls)
 		{
 			var angleRad: Number = Math.atan2(-afY, afX);
 			var angleDeg: Number = angleRad * 180 / Math.PI;
 
-			var clickHour: Number = Math.round(((angleDeg + 450) % 360) * 24 / 360);
+			var clickHour: Number = Math.round(((angleDeg + 270) % 360) * 24 / 360);
 			if (clickHour <= 0)
 				clickHour = 24;
 
@@ -187,19 +193,19 @@ class SleepWaitMenu extends MovieClip
 		}
 	}
 
-	private function sliderChange(event: Object): Void
+
+	private function updateWaitTime(): Void
 	{
-		hours = getSliderValue();
-		WaitTime.SetText(hours);
+		WaitTime.SetText(waitHours);
 
 		GameDelegate.call("PlaySound", ["UIMenuPrevNext"]);
 
-		if (!bWaiting)
+		if (!isWaiting)
 		{
-			drawBar(iHour, hours);
+			drawMask(currentHour, waitHours);
 			setWaitTime();
 
-			var iTimeUse: Number = iHour + hours;
+			var iTimeUse: Number = currentHour + waitHours;
 			if (iTimeUse > 24)
 				iTimeUse -= 24;
 
@@ -213,20 +219,20 @@ class SleepWaitMenu extends MovieClip
 		{
 			showCursor(true);
 
-			bWaiting = disableControls = true;
-			GameDelegate.call("OK", [getSliderValue()]);
+			isWaiting = disableControls = true;
+			GameDelegate.call("OK", [waitHours]);
 		}
 	}
 
 	private function onCancelPress(event: Object): Void
 	{
-		bWaiting = false;
+		isWaiting = false;
 		GameDelegate.call("Cancel", []);
 	}
 
 	private function handleRollActions(): Void
 	{
-		if (!bWaiting)
+		if (!isWaiting)
 		{
 			bInArea = !bInArea;
 			showCursor(!bInArea);
@@ -240,6 +246,7 @@ class SleepWaitMenu extends MovieClip
 		showCursor(true);
 	}
 
+
 	/**
 	 * DLL RECIEVER
 	 * It sets the date and time for the menu
@@ -249,34 +256,41 @@ class SleepWaitMenu extends MovieClip
 	 * If waiting, we are redrawing the bar everytime this function gets called, this update
 	 * happens every hour.
 	*/
-	public function setTimeAndDate(): Void
+	public function setTimeAndDate(hours12: Number, hours24: Number, minute: String, day: String, dayName: String, monthName: String, year: Number): Void
 	{
-		var sameHour: Boolean = iHour == arguments[1];
-		iHour = arguments[1];
+		var sameHour: Boolean = currentHour == hours24;
+		currentHour = hours24;
 
-		if (bWaiting)
-			drawBar(iHour, hours);
+		if (isWaiting)
+		{
+			waitHours--;
+			drawMask(currentHour, waitHours);
+		}
 		else
 		{
-			minute = arguments[2];
+			this.minute = minute;
 
-			sliderChange();
-
-			if (!sameHour || !bDoOnce)
+			// Suport for unpaused menu mods
+			if (!sameHour && waitHours > 1)
 			{
-				bDoOnce = true;
-				progressBar.gotoAndStop(iHour + 1);
+				waitHours -= 1;
+				modifySliderValue(-1);
 			}
+
+			updateWaitTime();
 		}
 
-		setTimeText(arguments);
+		setTimeText(hours12, day, dayName, monthName, year);
 	}
 
-	// DLL Call
-	public function updateWeather(): Void
+	/**
+	 * DLL RECIEVER
+	 * Sets the correct weather icon
+	*/
+	public function updateWeather(classification: Number): Void
 	{
 		iconWeather._alpha = 100;
-		iconWeather.gotoAndStop(Number(arguments) + 1);
+		iconWeather.gotoAndStop(classification + 1);
 	}
 
 	// API
@@ -285,51 +299,44 @@ class SleepWaitMenu extends MovieClip
 		QuestionInstance.SetText(aSleeping ? "$fta_REST" : "$fta_WAIT");
 	}
 
-	// API
-	public function SetCurrentTime(aTime: String): Void
-	{
-
-	}
-
 	private function changeWaitTime(clickHour: Number): Void
 	{
 		if (iOldClickHour != clickHour)
 		{
 			iOldClickHour = clickHour;
 
-			// The following needs to be here two times
-			var hoursDifference: Number = (clickHour - iHour) - 12;
+			var hoursDifference: Number = clickHour - currentHour;
 			if (hoursDifference <= 0)
 				hoursDifference += 24;
 
-			setSliderValue(hoursDifference);
+			waitHours = hoursDifference;
+			HoursSlider.value = hoursDifference;
 		}
 	}
 
-	private function setTimeText(args: Array): Void
+	private function setTimeText(hours12: Number, day: String, dayName: String, monthName: String, year: Number): Void
 	{
 		var timeString: String = "";
 		if (is24Clock)
 		{
-			var leadingZero: String = (useLeadingZero && iHour < 10) ? "0" : "";
-			timeString = leadingZero + iHour + ":" + minute;
+			var leadingZero: String = (useLeadingZero && currentHour < 10) ? "0" : "";
+			timeString = leadingZero + currentHour + ":" + minute;
 		}
 		else
 		{
-			var time: Number = args[0];
-			var suffix: String = (iHour < 12) ? suffixAM : suffixPM;
-			var leadingZero: String = (useLeadingZero && (time > 0 && time < 10)) ? "0" : "";
+			var suffix: String = (currentHour < 12) ? suffixAM : suffixPM;
+			var leadingZero: String = (useLeadingZero && (hours12 > 0 && hours12 < 10)) ? "0" : "";
 
-			timeString = leadingZero + args[0] + ":" + minute + " " + suffix;
+			timeString = leadingZero + hours12 + ":" + minute + " " + suffix;
 		}
 
 		CurTime.SetText(timeString);
-		CurrentDate.SetText(args[4] + ", " + args[3] + ". " + args[5] + " " + args[6]);
+		CurrentDate.SetText(dayName + ", " + day + ". " + monthName + " " + year);
 	}
 
 	private function setWaitTime(): Void
 	{
-		var newHour: Number = iHour + hours;
+		var newHour: Number = currentHour + waitHours;
 		if (newHour >= 24)
 			newHour -= 24;
 
@@ -353,11 +360,11 @@ class SleepWaitMenu extends MovieClip
 		cursor._alpha = bShow ? 0 : 100;
 	}
 
-	private function drawBar(currentTime: Number, waitTime: Number): Void
+	private function drawMask(currentTime: Number, waitTime: Number): Void
 	{
-		var centerX: Number = 239.85;
-		var centerY: Number = 239.85;
-		var radius: Number = 250;
+		var centerX: Number = 0;
+		var centerY: Number = 0;
+		var radius: Number = 350;
 		var fraction: Number = 15;
 
 		var startAngle: Number = -270 + (currentTime * fraction);
@@ -365,7 +372,7 @@ class SleepWaitMenu extends MovieClip
 		var angleStep: Number = 5;
 
 		container.clear();
-		container.beginFill(0x828282, 100);
+		container.beginFill(0xFFFFFF, 100);
 		container.moveTo(centerX, centerY);
 
 		for (var angle: Number = startAngle; angle <= endAngle; angle += angleStep)
@@ -382,5 +389,34 @@ class SleepWaitMenu extends MovieClip
 	{
 		var hour12: Number = hour % 12;
 		return (useLeadingZero && (hour12 > 0 && hour12 < 10) ? "0" : "") + (hour12 == 0 ? "12" : hour12.toString());
+	}
+
+
+	// No longer used but kept as the Engine is accessing them
+	
+	// API
+	public function SetCurrentTime(aTime: String): Void
+	{
+
+	}
+
+	// Bethesda made this work like hell.
+	private function sliderChange(event: Object): Void
+	{
+
+	}
+
+	// API
+	// Bethesda made this work like hell.
+	// Better not touch this anymore, this causes extrem carnage
+	public function getSliderValue(): Number
+	{
+		return Math.floor(HoursSlider.value);
+	}
+
+	public function modifySliderValue(aiDelta: Number): Void
+	{
+		HoursSlider.value += aiDelta;
+		sliderChange();
 	}
 }

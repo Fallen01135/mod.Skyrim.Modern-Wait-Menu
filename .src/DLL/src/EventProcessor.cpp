@@ -8,7 +8,7 @@ namespace ModernWaitMenu
 	using EventHandler = std::function<void(const SKSE::ModCallbackEvent*)>;
 
 	/**
-	* @brief This is a collection of all supported Mod Events that my plugin supports and uses.
+	* @brief This is a collection of all supported Mod Events that this plugin supports and uses.
 	* 
 	* This was made in favour of more organisation and less if/case statements.
 	* More information about each entries, check the entries itself.
@@ -47,8 +47,6 @@ namespace ModernWaitMenu
 			auto view = menu ? menu->uiMovie.get() : nullptr;
 
 			auto settings = ModernWaitMenu::Settings::GetSingleton();
-			if (!settings)
-				MWM_LOG_CRITICAL("Settings could not be loaded!");
 
 			if (view && settings)
 			{
@@ -77,6 +75,10 @@ namespace ModernWaitMenu
 
 				MWM_LOG_DEBUG("Wait menu opened.");
 			}
+			else if (!view)
+				MWM_LOG_CRITICAL("SleepWaitMenu could not be found and opened!");
+			else if (!settings)
+				MWM_LOG_CRITICAL("Settings could not be loaded!");
 		}
 
 		return RE::BSEventNotifyControl::kContinue;

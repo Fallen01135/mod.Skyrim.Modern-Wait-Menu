@@ -75,9 +75,12 @@ namespace ModernWaitMenu
 			All of those checks makes sure we only fire the invoke call only once and only when we need it.
 		*/
 		RE::GFxValue bWaitingValue;
-		if (!a_force && a_view->GetVariable(&bWaitingValue, "_root.SleepWaitMenu_mc.bWaiting"))
+		bool isWaiting = false;
+		if (a_view->GetVariable(&bWaitingValue, "_root.SleepWaitMenu_mc.isWaiting"))
+			isWaiting = bWaitingValue.GetBool();
+
+		if (!a_force)
 		{
-			bool isWaiting = bWaitingValue.GetBool();
 			if (isWaiting)
 			{
 				if (hours24 == lastHours)
