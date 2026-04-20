@@ -52,7 +52,7 @@ SKSEPluginLoad(const SKSE::LoadInterface* skse)
 		return false;
 
 	// Retrieve Settings and Initialize Hooks and Events
-	ModernWaitMenu::Settings::GetSingleton()->Load();
+	ModernWaitMenu::Settings::Load();
 	SKSE::GetMessagingInterface()->RegisterListener(SKSEMessageHandler);
 	ModernWaitMenu::SleepWaitMenuHook::Install();
 

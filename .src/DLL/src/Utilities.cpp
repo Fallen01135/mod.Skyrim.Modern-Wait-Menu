@@ -1,11 +1,13 @@
 #include "Utilities.h"
 #include "Logger.h"
+#include "Settings.h"
 #include <windows.h>
 #include <Xinput.h>
 #pragma comment(lib, "Xinput.lib")
 
 namespace ModernWaitMenu
 {
+	// Weather Manager
 	void WeatherManager::updateCurrentWeather(RE::GFxMovieView* a_view, bool a_force)
 	{
 		RE::Sky* sky = RE::Sky::GetSingleton();
@@ -50,6 +52,7 @@ namespace ModernWaitMenu
 		}
 	}
 
+	// Time Manager
 	void TimeManager::UpdateMenuTime(RE::GFxMovieView* a_view, bool a_force)
 	{
 		// Retrieve the calender which holds all information about time and date.
@@ -123,18 +126,19 @@ namespace ModernWaitMenu
 			MWM_LOG_CRITICAL("Argument count not correct! Size: {}; Index: {}", size, index);
 	}
 
-	void ControllManager::sendStickInformation(RE::GFxMovieView* a_view, const char* location, bool left)
+	// Control Manager
+	void ControlManager::sendStickInformation(RE::GFxMovieView* a_view, const char* location, StickType stickType)
 	{
 		XINPUT_STATE state;
 		ZeroMemory(&state, sizeof(XINPUT_STATE));
 
 		if (XInputGetState(0, &state) == ERROR_SUCCESS)
 		{
-			float x = (left ? state.Gamepad.sThumbLX : state.Gamepad.sThumbRX) / 32767.0f;
-			float y = (left ? state.Gamepad.sThumbLY : state.Gamepad.sThumbRY) / 32767.0f;
+			float x = (stickType == StickType::left ? state.Gamepad.sThumbLX : state.Gamepad.sThumbRX) / 32767.0f;
+			float y = (stickType == StickType::left ? state.Gamepad.sThumbLY : state.Gamepad.sThumbRY) / 32767.0f;
 
-			float& refLastX = left ? lastLX : lastRX;
-			float& refLastY = left ? lastLY : lastRY;
+			float& refLastX = (stickType == StickType::left ? lastLX : lastRX);
+			float& refLastY = (stickType == StickType::left ? lastLY : lastRY);
 
 			float deadzone = 0.25f;
 			float magnitude = sqrt((x * x) + (y * y));
@@ -142,6 +146,7 @@ namespace ModernWaitMenu
 			if (magnitude < deadzone)
 				x = y = 0.0f;
 
+			// Only pack and send the data to the menu if we actually need to
 			if (std::abs(x - refLastX) > 0.01f || std::abs(y - refLastY) > 0.01f)
 			{
 				RE::GFxValue args[2];
@@ -152,6 +157,67 @@ namespace ModernWaitMenu
 
 				refLastX = x;
 				refLastY = y;
+			}
+		}
+	}
+
+	void ControlManager::sendDPadInformation(RE::GFxMovieView* a_view, const char* location)
+	{
+		XINPUT_STATE state;
+		ZeroMemory(&state, sizeof(XINPUT_STATE));
+
+		if (XInputGetState(0, &state) == ERROR_SUCCESS)
+		{
+			bool up = (state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP);
+			bool down = (state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN);
+			bool left = (state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT);
+			bool right = (state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT);
+
+			bool anyPressed = (up || down || left || right);
+			bool stateChanged = (up != lastUp || down != lastDown || left != lastLeft || right != lastRight);
+
+			accumulator += RE::GetSecondsSinceLastFrame();
+			bool sendData = false;
+
+			if (stateChanged)
+			{
+				// If we pressed the key, this happens
+				lastUp = up;
+				lastDown = down;
+				lastLeft = left;
+				lastRight = right;
+
+				if (anyPressed)
+				{
+					sendData = true;
+					accumulator = 0.0;
+				}
+			}
+			else if (anyPressed && accumulator >= Settings::DPadInitialDelay())
+			{
+				// If we hold the key for "DPadInitialDelay()" amount of seconds,
+				// this will repeat until we let go of the key
+				sendData = true;
+				accumulator -= Settings::DPadRepeatRate();
+
+				if (accumulator > Settings::DPadInitialDelay())
+					accumulator = 0.0;
+			}
+
+			if (!anyPressed)
+				accumulator = 0.0;
+
+			// Only send the data if we really need to. This saves ressources and improves performance.
+			if (sendData)
+			{
+				const int size = 4;
+				RE::GFxValue args[size];
+				args[0].SetBoolean(up);
+				args[1].SetBoolean(down);
+				args[2].SetBoolean(left);
+				args[3].SetBoolean(right);
+
+				a_view->Invoke(location, nullptr, args, size);
 			}
 		}
 	}

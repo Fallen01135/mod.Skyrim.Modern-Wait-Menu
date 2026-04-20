@@ -38,24 +38,47 @@ namespace ModernWaitMenu
 		static void UpdateMenuTime(RE::GFxMovieView* a_view, bool a_force);
 	};
 
-	class ControllManager
+	class ControlManager
 	{
 	private:
+		// sendStickInformation
 		inline static float lastLX = 0.0f, lastLY = 0.0f;
 		inline static float lastRX = 0.0f, lastRY = 0.0f;
 
+		// sendDPadInformation
+		inline static bool lastUp = false, lastDown = false, lastLeft = false, lastRight = false;
+		inline static double accumulator = 0.0;
+
 	public:
+		enum class StickType : std::uint8_t
+		{
+			left = 0,
+			right = 1
+		};
+
 		/**
 		* @brief This sends controller stick information to the Menu
 		*
-		* As AS2 does not have any controller support, we need to make it.
+		* As AS2 does not have any real gamepad support, we need to make it.
 		* For this, we gather the controller information from the standard library and send
-		* it to the menu. We only send the infos when the stick position was changed.
+		* it to the menu. We only send the information when the stick position was changed.
 		*
 		* @param a_view The Flash-Movie-Pointer of the Menu.
 		* @param location This is the "path" inside the menu file to the function that should be called.
 		* @param left If this should send the Left or Right stick information to the menu.
 		*/
-		static void sendStickInformation(RE::GFxMovieView* a_view, const char* location, bool left);
+		static void sendStickInformation(RE::GFxMovieView* a_view, const char* location, StickType stickType);
+
+		/**
+		* @brief This sends gamepads D-Pad information to the Menu
+		*
+		* As AS2 does not have any real gamepad support, and the left stick is the same as the D-Pad so we make this here.
+		* For this, we gather the controller information from the standard library and send
+		* it to the menu. We only send the information when the D-Pad is used.
+		*
+		* @param a_view The Flash-Movie-Pointer of the Menu.
+		* @param location This is the "path" inside the menu file to the function that should be called.
+		*/
+		static void sendDPadInformation(RE::GFxMovieView* a_view, const char* location);
 	};
 }

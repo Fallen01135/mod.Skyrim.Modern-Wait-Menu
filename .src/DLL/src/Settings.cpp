@@ -25,6 +25,10 @@ namespace ModernWaitMenu
 		bUse24Clock = ini.GetBoolValue("General", "bUse24Clock", true);
 		bUseLeadingZero = ini.GetBoolValue("General", "bUseLeadingZero", true);
 
+		bActivateLeftStick = ini.GetBoolValue("Controls", "bActivateLeftStick", true);
+		fDPadInitialDelay = static_cast<float>(ini.GetDoubleValue("Controls", "fDPadInitialDelay", 0.5));
+		fDPadRepeatRate = static_cast<float>(ini.GetDoubleValue("Controls", "fDPadRepeatRate", 0.1));
+
 		bExtraLogging = ini.GetBoolValue("Debug", "bExtraLogging", false);
 
 		MWM_LOG_INFO("Settings: Loaded.");
@@ -32,6 +36,9 @@ namespace ModernWaitMenu
 		// Output all of the applied settings
 		MWM_LOG_INFO("Use 24 Clock: {}", bUse24Clock);
 		MWM_LOG_INFO("Use Leading Zero: {}", bUseLeadingZero);
+		MWM_LOG_INFO("Left Stick active: {}", bActivateLeftStick);
+		MWM_LOG_INFO("D-Pad Initial Delay: {}", fDPadInitialDelay);
+		MWM_LOG_INFO("D-Pad Repeat Rate: {}", fDPadRepeatRate);
 		MWM_LOG_INFO("Extra Logs: {}", bExtraLogging);
 
 		applySettings();

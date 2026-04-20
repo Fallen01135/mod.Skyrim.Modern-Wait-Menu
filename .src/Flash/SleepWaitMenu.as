@@ -33,6 +33,7 @@ class SleepWaitMenu extends MovieClip
 
 	private var currentHour: Number = 0;
 	private var waitCounter: Number = 0;
+	private var iPlatform: Number = 0;
 
 	private var isWaiting: Boolean = false;
 
@@ -72,6 +73,8 @@ class SleepWaitMenu extends MovieClip
 		ButtonRect.AcceptMouseButton.SetPlatform(0, false);
 		ButtonRect.CancelMouseButton.SetPlatform(0, false);
 
+		// HoursSlider.focusEnabled = false;
+
 		ButtonRect.AcceptMouseButton.addEventListener("click", this, "onOKPress");
 		ButtonRect.CancelMouseButton.addEventListener("click", this, "onCancelPress");
 		hitbox.onRollOver = hitbox.onRollOut = Delegate.create(this, handleRollActions);
@@ -83,6 +86,8 @@ class SleepWaitMenu extends MovieClip
 
 	public function SetPlatform(aiPlatformIndex: Number, abPS3Switch: Boolean): Void
 	{
+		iPlatform = aiPlatformIndex;
+
 		ButtonRect.AcceptGamepadButton._visible = aiPlatformIndex != 0;
 		ButtonRect.CancelGamepadButton._visible = aiPlatformIndex != 0;
 		ButtonRect.AcceptMouseButton._visible = aiPlatformIndex == 0;
@@ -109,7 +114,7 @@ class SleepWaitMenu extends MovieClip
 
 	public function set waitHours(value: Number): Void
 	{
-		_waitHours = Utility.clamp(value, 0, 24);
+		_waitHours = Utility.clamp(value, (isWaiting ? 0 : 1), 24);
 		updateWaitTime();
 	}
 
@@ -134,6 +139,22 @@ class SleepWaitMenu extends MovieClip
 					break;
 				case NavigationCode.ENTER:
 					onOKPress();
+					break;
+				case NavigationCode.LEFT:
+					if (iPlatform == 0)
+						onDPadInput(false, false, true, false);
+					break;
+				case NavigationCode.RIGHT:
+					if (iPlatform == 0)
+						onDPadInput(false, false, false, true);
+					break;
+				case gfx.ui.NavigationCode.PAGE_UP:
+				case gfx.ui.NavigationCode.GAMEPAD_R1:
+					onMouseWheel(4)
+					break;
+				case gfx.ui.NavigationCode.PAGE_DOWN:
+				case gfx.ui.NavigationCode.GAMEPAD_L1:
+					onMouseWheel(-4)
 					break;
 			}
 		}
@@ -193,6 +214,21 @@ class SleepWaitMenu extends MovieClip
 		}
 	}
 
+	// DLL Call
+	public function onDPadInput(up: Boolean, down: Boolean, left: Boolean, right: Boolean): Void
+	{
+		if (disableControls) return;
+
+		var delta: Number = 0;
+		if (left) delta -= 1;
+		if (right) delta += 1;
+
+		if (delta == 0) return;
+
+		waitHours += delta;
+		modifySliderValue(delta);
+	}
+	
 
 	private function updateWaitTime(): Void
 	{

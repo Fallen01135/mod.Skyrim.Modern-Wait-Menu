@@ -36,7 +36,7 @@ namespace ModernWaitMenu
 		}
 	};
 
-	RE::BSEventNotifyControl ModernWaitMenu::EventProcessor::ProcessEvent(const RE::MenuOpenCloseEvent* a_event,
+	RE::BSEventNotifyControl EventProcessor::ProcessEvent(const RE::MenuOpenCloseEvent* a_event,
 		RE::BSTEventSource<RE::MenuOpenCloseEvent>* a_eventSource)
 	{
 		if (a_event && a_event->menuName == RE::SleepWaitMenu::MENU_NAME && a_event->opening)
@@ -46,9 +46,7 @@ namespace ModernWaitMenu
 			auto menu = ui ? ui->GetMenu(RE::SleepWaitMenu::MENU_NAME) : nullptr;
 			auto view = menu ? menu->uiMovie.get() : nullptr;
 
-			auto settings = ModernWaitMenu::Settings::GetSingleton();
-
-			if (view && settings)
+			if (view)
 			{
 				// We get the game settings for AM and PM, so we do not need to use translation strings.
 				// Fallback if not found we use AM and PM
@@ -63,22 +61,20 @@ namespace ModernWaitMenu
 				RE::GFxValue args[size];
 				args[0].SetString(amStr);
 				args[1].SetString(pmStr);
-				args[2].SetBoolean(settings->bUseLeadingZero);
-				args[3].SetBoolean(settings->bUse24Clock);
+				args[2].SetBoolean(Settings::useLeadingZero());
+				args[3].SetBoolean(Settings::is24Clock());
 
 				for (int i = 0; i < size; i++)
 					view->SetVariable(fmt::format("_root.SleepWaitMenu_mc.{}", as2VarNames[i]).c_str(), args[i]);
 
 				// Run other functions
-				ModernWaitMenu::TimeManager::UpdateMenuTime(view, true);
-				ModernWaitMenu::WeatherManager::updateCurrentWeather(view, true);
+				TimeManager::UpdateMenuTime(view, true);
+				WeatherManager::updateCurrentWeather(view, true);
 
 				MWM_LOG_DEBUG("Wait menu opened.");
 			}
-			else if (!view)
+			else
 				MWM_LOG_CRITICAL("SleepWaitMenu could not be found and opened!");
-			else if (!settings)
-				MWM_LOG_CRITICAL("Settings could not be loaded!");
 		}
 
 		return RE::BSEventNotifyControl::kContinue;

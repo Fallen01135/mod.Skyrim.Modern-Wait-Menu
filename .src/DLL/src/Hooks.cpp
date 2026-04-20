@@ -1,6 +1,7 @@
 #include "Hooks.h"
 #include "Utilities.h"
 #include "logger.h"
+#include "Settings.h"
 
 namespace ModernWaitMenu
 {
@@ -11,9 +12,13 @@ namespace ModernWaitMenu
 			auto view = a_this->uiMovie.get();
 			if (view)
 			{
-				ModernWaitMenu::TimeManager::UpdateMenuTime(view, false);
-				ModernWaitMenu::WeatherManager::updateCurrentWeather(view, false);
-				ModernWaitMenu::ControllManager::sendStickInformation(view, "_root.SleepWaitMenu_mc.onStickLeft", true);
+				TimeManager::UpdateMenuTime(view, false);
+				WeatherManager::updateCurrentWeather(view, false);
+
+				if (Settings::leftStickActive())
+					ControlManager::sendStickInformation(view, "_root.SleepWaitMenu_mc.onStickLeft", ControlManager::StickType::left);
+
+				ControlManager::sendDPadInformation(view, "_root.SleepWaitMenu_mc.onDPadInput");
 			}
 			else
 				MWM_LOG_DEBUG("Menu not found, skipping");
