@@ -33,6 +33,7 @@ void SKSEMessageHandler(SKSE::MessagingInterface::Message* message)
 			}
 			break;
 		case SKSE::MessagingInterface::kInputLoaded:
+			MWM_LOG_INFO("Input Loaded.");
 			SKSE::GetModCallbackEventSource()->AddEventSink(eventProcessor);
 
 			if (deviceManager)
@@ -49,7 +50,7 @@ void SKSEMessageHandler(SKSE::MessagingInterface::Message* message)
 			break;
 	}
 }
-//
+
 SKSEPluginLoad(const SKSE::LoadInterface* skse)
 {
 	SKSE::Init(skse);

@@ -51,5 +51,7 @@ namespace ModernWaitMenu
 	{
 		spdlog::set_level(bExtraLogging ? spdlog::level::trace : spdlog::level::info);
 		spdlog::flush_on(bExtraLogging ? spdlog::level::trace : spdlog::level::info);
+
+		_isVR = REL::Module::get().GetRuntime() == REL::Module::Runtime::VR;
 	}
 }

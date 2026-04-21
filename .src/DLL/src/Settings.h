@@ -19,6 +19,9 @@ namespace ModernWaitMenu
 		// Debug
 		inline static bool bExtraLogging{ false };
 
+		// None ini
+		inline static bool _isVR{ false };
+
 	public:
 		// Getter
 		[[nodiscard]] static bool is24Clock() noexcept { return bUse24Clock; };
@@ -29,6 +32,9 @@ namespace ModernWaitMenu
 		[[nodiscard]] static float DPadRepeatRate() noexcept { return fDPadRepeatRate; };
 
 		[[nodiscard]] static bool extraLoggingActive() noexcept { return bExtraLogging; };
+
+		[[nodiscard]] static bool isVR() noexcept { return _isVR; };
+
 
 		/**
 		* @brief This is the loader for the config ini file.

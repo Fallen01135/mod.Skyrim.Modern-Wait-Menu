@@ -50,7 +50,7 @@ namespace ModernWaitMenu
 		inline static std::array<bool, 4> states = { false, false, false, false };
 		inline static std::array<bool, 4> lastStates = { false, false, false, false };
 		inline static std::array<bool, 4> falseArray = { false, false, false, false }; // For easier comparison if any key is pressed
-		inline static double accumulator = 0.0;
+		inline static float accumulator = 0.0f;
 
 	public:
 		enum class StickType

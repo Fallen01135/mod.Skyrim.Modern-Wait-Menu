@@ -38,7 +38,7 @@ namespace ModernWaitMenu
 	};
 
 	RE::BSEventNotifyControl EventProcessor::ProcessEvent(const RE::MenuOpenCloseEvent* a_event,
-		RE::BSTEventSource<RE::MenuOpenCloseEvent>* a_eventSource)
+		RE::BSTEventSource<RE::MenuOpenCloseEvent>*)
 	{
 		if (a_event && a_event->opening && a_event->menuName == RE::SleepWaitMenu::MENU_NAME)
 		{
@@ -60,15 +60,22 @@ namespace ModernWaitMenu
 					MWM_LOG_WARN("Game Settings could not be loaded, using pre defined AM and PM instead.");
 
 				// This sets some variables inside of the ActionScript 2 code of the Menu
-				const int size = 4;
+				const int size = 5;
+				int index = 0;
 				RE::GFxValue args[size];
-				args[0].SetString(amStr);
-				args[1].SetString(pmStr);
-				args[2].SetBoolean(Settings::useLeadingZero());
-				args[3].SetBoolean(Settings::is24Clock());
+				args[index++].SetString(amStr);
+				args[index++].SetString(pmStr);
+				args[index++].SetBoolean(Settings::useLeadingZero());
+				args[index++].SetBoolean(Settings::is24Clock());
+				args[index++].SetBoolean(Settings::isVR());
 
-				for (int i = 0; i < size; i++)
-					view->SetVariable(fmt::format("_root.SleepWaitMenu_mc.{}", as2VarNames[i]).c_str(), args[i]);
+				if (index == size)
+				{
+					for (size_t i = 0; i < size; i++)
+						view->SetVariable(fmt::format("_root.SleepWaitMenu_mc.{}", as2VarNames[i]).c_str(), args[i]);
+				}
+				else
+					MWM_LOG_CRITICAL("Argument count not correct! Size: {}; Index: {}", size, index);
 
 				// Run other functions
 				TimeManager::UpdateMenuTime(view, true);
@@ -86,7 +93,7 @@ namespace ModernWaitMenu
 	};
 
 	RE::BSEventNotifyControl EventProcessor::ProcessEvent(const SKSE::ModCallbackEvent* a_event,
-		RE::BSTEventSource<SKSE::ModCallbackEvent>* a_eventSource)
+		RE::BSTEventSource<SKSE::ModCallbackEvent>*)
 	{
 		if (a_event)
 		{
@@ -105,7 +112,7 @@ namespace ModernWaitMenu
 	}
 
 	RE::BSEventNotifyControl EventProcessor::ProcessEvent(RE::InputEvent* const* a_event,
-		RE::BSTEventSource<RE::InputEvent*>* a_eventSource)
+		RE::BSTEventSource<RE::InputEvent*>*)
 	{
 		if (a_event && *a_event && isSleepWaitMenuOpen())
 		{
@@ -133,12 +140,13 @@ namespace ModernWaitMenu
 						ControlManager::DPadType id = static_cast<ControlManager::DPadType>(button->idCode);
 						if
 						(
-							id == ControlManager::DPadType::up ||
-							id == ControlManager::DPadType::down ||
 							id == ControlManager::DPadType::left ||
 							id == ControlManager::DPadType::right
 						)
-							ControlManager::updateDPad(button->idCode, button->IsDown());
+						{
+							ControlManager::updateDPad(button->idCode, button->IsPressed());
+							ControlManager::sendDPadInformation(getView(), "_root.SleepWaitMenu_mc.onDPadInput");
+						}
 					}
 				}
 			}

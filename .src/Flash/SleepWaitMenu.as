@@ -42,6 +42,7 @@ class SleepWaitMenu extends MovieClip
 	public var useLeadingZero: Boolean = true;
 	public var suffixAM: String = "";
 	public var suffixPM: String = "";
+	public var isVR: Boolean = false;
 	// ----------
 
 	// onMouseMove()
@@ -65,15 +66,13 @@ class SleepWaitMenu extends MovieClip
 
 	public function InitExtensions(): Void
 	{
-		Stage.scaleMode = "showAll";
-
 		Mouse.addListener(this);
 		FocusHandler.instance.setFocus(this, 0);
 
 		ButtonRect.AcceptMouseButton.SetPlatform(0, false);
 		ButtonRect.CancelMouseButton.SetPlatform(0, false);
 
-		// HoursSlider.focusEnabled = false;
+		HoursSlider.focusEnabled = false;
 
 		ButtonRect.AcceptMouseButton.addEventListener("click", this, "onOKPress");
 		ButtonRect.CancelMouseButton.addEventListener("click", this, "onCancelPress");
@@ -294,6 +293,15 @@ class SleepWaitMenu extends MovieClip
 	*/
 	public function setTimeAndDate(hours12: Number, hours24: Number, minute: String, day: String, dayName: String, monthName: String, year: Number): Void
 	{
+		// I hope this fixes the VR stretching issue
+		if (!bDoOnce)
+		{
+			bDoOnce = true;
+
+			if (!isVR)
+				Stage.scaleMode = "showAll";
+		}
+
 		var sameHour: Boolean = currentHour == hours24;
 		currentHour = hours24;
 

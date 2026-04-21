@@ -139,7 +139,11 @@ namespace ModernWaitMenu
 				return;
 		}
 
-		states[i] = isDown;
+		if (states[i] != isDown)
+		{
+			states[i] = isDown;
+			MWM_LOG_DEBUG("D-Pad state changed: {} is now {}", i, isDown);
+		}
 	}
 
 	void ControlManager::sendStickInformation(RE::GFxMovieView* a_view, const char* location, StickType stickType, float x, float y)
@@ -173,31 +177,34 @@ namespace ModernWaitMenu
 	void ControlManager::sendDPadInformation(RE::GFxMovieView* a_view, const char* location)
 	{
 		// Check if something was pressed, if not we just quite
-		if (states == falseArray)
-		{
-			accumulator = 0.0;
-			return;
-		}
+		bool anyPressed = states != falseArray;
+		bool stateChanged = states != lastStates;
 
 		accumulator += RE::GetSecondsSinceLastFrame();
 
 		bool sendData = false;
-		if (states != lastStates)
+		if (stateChanged)
 		{
 			lastStates = states;
 
 			sendData = true;
-			accumulator = 0.0;
+			accumulator = 0.0f;
 		}
-		else if (accumulator >= Settings::DPadInitialDelay())
+		else if (anyPressed && accumulator >= Settings::DPadInitialDelay())
 		{
 			// If we hold the key for "DPadInitialDelay()" amount of seconds,
 			// this will repeat until we let go of the key
 			sendData = true;
+
 			accumulator -= Settings::DPadRepeatRate();
 
 			if (accumulator > Settings::DPadInitialDelay())
-				accumulator = 0.0;
+				accumulator = 0.0f;
+		}
+
+		if (!anyPressed)
+		{
+			accumulator = 0.0f;
 		}
 
 		// Only send the data if we really need to. This saves ressources and improves performance.
@@ -205,7 +212,7 @@ namespace ModernWaitMenu
 		{
 			const int size = 4;
 			RE::GFxValue args[size];
-			for (int i = 0; i < size; i++)
+			for (size_t i = 0; i < size; i++)
 				args[i].SetBoolean(states[i]);
 
 			a_view->Invoke(location, nullptr, args, size);

@@ -12,7 +12,7 @@ namespace ModernWaitMenu
 		public RE::BSTEventSink<RE::InputEvent*>
 	{
 	private:
-		inline static constexpr std::string_view as2VarNames[] = { "suffixAM", "suffixPM", "useLeadingZero", "is24Clock" };
+		inline static constexpr std::string_view as2VarNames[] = { "suffixAM", "suffixPM", "useLeadingZero", "is24Clock", "isVR" };
 		inline static RE::GFxMovieView* _view { nullptr };
 
 	public:
