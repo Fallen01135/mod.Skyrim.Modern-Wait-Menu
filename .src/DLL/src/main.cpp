@@ -22,17 +22,24 @@ void SKSEMessageHandler(SKSE::MessagingInterface::Message* message)
 {
 	auto ui = RE::UI::GetSingleton();
 	auto eventProcessor = ModernWaitMenu::EventProcessor::GetSingleton();
+	auto deviceManager = RE::BSInputDeviceManager::GetSingleton();
 	switch (message->type)
 	{
 		case (SKSE::MessagingInterface::kDataLoaded):
 			if (ui)
 			{
 				ui->GetEventSource<RE::MenuOpenCloseEvent>()->AddEventSink(eventProcessor);
-				MWM_LOG_INFO("Event Sink erfolgreich registriert.");
+				MWM_LOG_INFO("Event Sink registered.");
 			}
 			break;
 		case SKSE::MessagingInterface::kInputLoaded:
 			SKSE::GetModCallbackEventSource()->AddEventSink(eventProcessor);
+
+			if (deviceManager)
+			{
+				deviceManager->AddEventSink(eventProcessor);
+				MWM_LOG_INFO("Input Event Sink registered.");
+			}
 			break;
 		case SKSE::MessagingInterface::kPostLoadGame:
 		case SKSE::MessagingInterface::kPostLoad:

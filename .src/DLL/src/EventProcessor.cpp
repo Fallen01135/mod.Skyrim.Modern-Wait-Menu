@@ -39,7 +39,7 @@ namespace ModernWaitMenu
 	RE::BSEventNotifyControl EventProcessor::ProcessEvent(const RE::MenuOpenCloseEvent* a_event,
 		RE::BSTEventSource<RE::MenuOpenCloseEvent>* a_eventSource)
 	{
-		if (a_event && a_event->menuName == RE::SleepWaitMenu::MENU_NAME && a_event->opening)
+		if (a_event && a_event->opening && a_event->menuName == RE::SleepWaitMenu::MENU_NAME)
 		{
 			// Retrieve the Menu
 			auto ui = RE::UI::GetSingleton();
@@ -48,6 +48,8 @@ namespace ModernWaitMenu
 
 			if (view)
 			{
+				EventProcessor::view = view;
+
 				// We get the game settings for AM and PM, so we do not need to use translation strings.
 				// Fallback if not found we use AM and PM
 				auto gameSettings = RE::GameSettingCollection::GetSingleton();
@@ -76,6 +78,8 @@ namespace ModernWaitMenu
 			else
 				MWM_LOG_CRITICAL("SleepWaitMenu could not be found and opened!");
 		}
+		else if (a_event && !a_event->opening && a_event->menuName == RE::SleepWaitMenu::MENU_NAME)
+			EventProcessor::view = nullptr;
 
 		return RE::BSEventNotifyControl::kContinue;
 	};
@@ -94,6 +98,31 @@ namespace ModernWaitMenu
 			}
 			else
 				MWM_LOG_DEBUG("Mod Event not registered: {}", a_event->eventName.c_str());
+		}
+
+		return RE::BSEventNotifyControl::kContinue;
+	}
+
+	RE::BSEventNotifyControl EventProcessor::ProcessEvent(RE::InputEvent* const* a_event, RE::BSTEventSource<RE::InputEvent*>* a_eventSource)
+	{
+		if (a_event && *a_event && view)
+		{
+			for (auto event = *a_event; event; event = event->next)
+			{
+				auto type = event->GetEventType();
+				if (Settings::leftStickActive() && type == RE::INPUT_EVENT_TYPE::kThumbstick)
+				{
+					auto thumbstick = static_cast<RE::ThumbstickEvent*>(event);
+					if (thumbstick->IsLeft())
+						ControlManager::sendStickInformation(view, "_root.SleepWaitMenu_mc.onStickLeft", ControlManager::StickType::left, thumbstick->xValue, thumbstick->yValue);
+				}
+				else if (type == RE::INPUT_EVENT_TYPE::kButton)
+				{
+					auto button = static_cast<RE::ButtonEvent*>(event);
+					if (button->IsDown() && (button->idCode == 4 || button->idCode == 8))
+						ControlManager::sendDPadInformation(view, "_root.SleepWaitMenu_mc.onDPadInput", button->idCode == 4 ? ControlManager::DPadType::left : ControlManager::DPadType::right);
+				}
+			}
 		}
 
 		return RE::BSEventNotifyControl::kContinue;

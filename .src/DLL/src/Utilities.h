@@ -56,6 +56,14 @@ namespace ModernWaitMenu
 			right = 1
 		};
 
+		enum class DPadType : std::uint8_t
+		{
+			up = 1,
+			down = 2,
+			left = 4,
+			right = 8
+		};
+
 		/**
 		* @brief This sends controller stick information to the Menu
 		*
@@ -67,7 +75,7 @@ namespace ModernWaitMenu
 		* @param location This is the "path" inside the menu file to the function that should be called.
 		* @param left If this should send the Left or Right stick information to the menu.
 		*/
-		static void sendStickInformation(RE::GFxMovieView* a_view, const char* location, StickType stickType);
+		static void sendStickInformation(RE::GFxMovieView* a_view, const char* location, StickType stickType, float x, float y);
 
 		/**
 		* @brief This sends gamepads D-Pad information to the Menu
@@ -79,6 +87,6 @@ namespace ModernWaitMenu
 		* @param a_view The Flash-Movie-Pointer of the Menu.
 		* @param location This is the "path" inside the menu file to the function that should be called.
 		*/
-		static void sendDPadInformation(RE::GFxMovieView* a_view, const char* location);
+		static void sendDPadInformation(RE::GFxMovieView* a_view, const char* location, DPadType type);
 	};
 }

@@ -14,11 +14,6 @@ namespace ModernWaitMenu
 			{
 				TimeManager::UpdateMenuTime(view, false);
 				WeatherManager::updateCurrentWeather(view, false);
-
-				if (Settings::leftStickActive())
-					ControlManager::sendStickInformation(view, "_root.SleepWaitMenu_mc.onStickLeft", ControlManager::StickType::left);
-
-				ControlManager::sendDPadInformation(view, "_root.SleepWaitMenu_mc.onDPadInput");
 			}
 			else
 				MWM_LOG_DEBUG("Menu not found, skipping");

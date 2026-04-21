@@ -127,98 +127,83 @@ namespace ModernWaitMenu
 	}
 
 	// Control Manager
-	void ControlManager::sendStickInformation(RE::GFxMovieView* a_view, const char* location, StickType stickType)
+	void ControlManager::sendStickInformation(RE::GFxMovieView* a_view, const char* location, StickType stickType, float x, float y)
 	{
-		XINPUT_STATE state;
-		ZeroMemory(&state, sizeof(XINPUT_STATE));
+		float& refLastX = (stickType == StickType::left ? lastLX : lastRX);
+		float& refLastY = (stickType == StickType::left ? lastLY : lastRY);
 
-		if (XInputGetState(0, &state) == ERROR_SUCCESS)
+		float deadzone = 0.25f;
+		float magnitude = sqrt((x * x) + (y * y));
+
+		if (magnitude < deadzone)
+			x = y = 0.0f;
+
+		// Only pack and send the data to the menu if we actually need to
+		if (std::abs(x - refLastX) > 0.01f || std::abs(y - refLastY) > 0.01f)
 		{
-			float x = (stickType == StickType::left ? state.Gamepad.sThumbLX : state.Gamepad.sThumbRX) / 32767.0f;
-			float y = (stickType == StickType::left ? state.Gamepad.sThumbLY : state.Gamepad.sThumbRY) / 32767.0f;
+			RE::GFxValue args[2];
+			args[0].SetNumber(x);
+			args[1].SetNumber(y);
 
-			float& refLastX = (stickType == StickType::left ? lastLX : lastRX);
-			float& refLastY = (stickType == StickType::left ? lastLY : lastRY);
+			a_view->Invoke(location, nullptr, args, 2);
 
-			float deadzone = 0.25f;
-			float magnitude = sqrt((x * x) + (y * y));
-
-			if (magnitude < deadzone)
-				x = y = 0.0f;
-
-			// Only pack and send the data to the menu if we actually need to
-			if (std::abs(x - refLastX) > 0.01f || std::abs(y - refLastY) > 0.01f)
-			{
-				RE::GFxValue args[2];
-				args[0].SetNumber(x);
-				args[1].SetNumber(y);
-
-				a_view->Invoke(location, nullptr, args, 2);
-
-				refLastX = x;
-				refLastY = y;
-			}
+			refLastX = x;
+			refLastY = y;
 		}
 	}
 
-	void ControlManager::sendDPadInformation(RE::GFxMovieView* a_view, const char* location)
+	void ControlManager::sendDPadInformation(RE::GFxMovieView* a_view, const char* location, DPadType type)
 	{
-		XINPUT_STATE state;
-		ZeroMemory(&state, sizeof(XINPUT_STATE));
+		bool up = type == DPadType::up;
+		bool down = type == DPadType::down;
+		bool left = type == DPadType::left;
+		bool right = type == DPadType::right;
 
-		if (XInputGetState(0, &state) == ERROR_SUCCESS)
+		bool anyPressed = (up || down || left || right);
+		bool stateChanged = (up != lastUp || down != lastDown || left != lastLeft || right != lastRight);
+
+		accumulator += RE::GetSecondsSinceLastFrame();
+		bool sendData = false;
+
+		if (stateChanged)
 		{
-			bool up = (state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP);
-			bool down = (state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN);
-			bool left = (state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT);
-			bool right = (state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT);
+			// If we pressed the key, this happens
+			lastUp = up;
+			lastDown = down;
+			lastLeft = left;
+			lastRight = right;
 
-			bool anyPressed = (up || down || left || right);
-			bool stateChanged = (up != lastUp || down != lastDown || left != lastLeft || right != lastRight);
-
-			accumulator += RE::GetSecondsSinceLastFrame();
-			bool sendData = false;
-
-			if (stateChanged)
+			if (anyPressed)
 			{
-				// If we pressed the key, this happens
-				lastUp = up;
-				lastDown = down;
-				lastLeft = left;
-				lastRight = right;
-
-				if (anyPressed)
-				{
-					sendData = true;
-					accumulator = 0.0;
-				}
-			}
-			else if (anyPressed && accumulator >= Settings::DPadInitialDelay())
-			{
-				// If we hold the key for "DPadInitialDelay()" amount of seconds,
-				// this will repeat until we let go of the key
 				sendData = true;
-				accumulator -= Settings::DPadRepeatRate();
-
-				if (accumulator > Settings::DPadInitialDelay())
-					accumulator = 0.0;
-			}
-
-			if (!anyPressed)
 				accumulator = 0.0;
-
-			// Only send the data if we really need to. This saves ressources and improves performance.
-			if (sendData)
-			{
-				const int size = 4;
-				RE::GFxValue args[size];
-				args[0].SetBoolean(up);
-				args[1].SetBoolean(down);
-				args[2].SetBoolean(left);
-				args[3].SetBoolean(right);
-
-				a_view->Invoke(location, nullptr, args, size);
 			}
+		}
+		else if (anyPressed && accumulator >= Settings::DPadInitialDelay())
+		{
+			// If we hold the key for "DPadInitialDelay()" amount of seconds,
+			// this will repeat until we let go of the key
+			sendData = true;
+			accumulator -= Settings::DPadRepeatRate();
+
+			if (accumulator > Settings::DPadInitialDelay())
+				accumulator = 0.0;
+		}
+
+		if (!anyPressed)
+			accumulator = 0.0;
+
+		// Only send the data if we really need to. This saves ressources and improves performance.
+		if (sendData)
+		{
+			const int size = 4;
+			RE::GFxValue args[size];
+			args[0].SetBoolean(up);
+			args[1].SetBoolean(down);
+			args[2].SetBoolean(left);
+			args[3].SetBoolean(right);
+
+			a_view->Invoke(location, nullptr, args, size);
 		}
 	}
 };

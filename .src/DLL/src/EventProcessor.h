@@ -7,10 +7,12 @@ namespace ModernWaitMenu
 	*/
 	class EventProcessor :
 		public RE::BSTEventSink<RE::MenuOpenCloseEvent>,
-		public RE::BSTEventSink<SKSE::ModCallbackEvent>
+		public RE::BSTEventSink<SKSE::ModCallbackEvent>,
+		public RE::BSTEventSink<RE::InputEvent*>
 	{
 	private:
 		inline static constexpr std::string_view as2VarNames[] = { "suffixAM", "suffixPM", "useLeadingZero", "is24Clock" };
+		inline static RE::GFxMovieView* view { nullptr };
 
 	public:
 		static EventProcessor* GetSingleton()
@@ -43,5 +45,7 @@ namespace ModernWaitMenu
 		* @return RE::BSEventNotifyControl::kContinue to allow other plugins to receive this event.
 		*/
 		RE::BSEventNotifyControl ProcessEvent(const SKSE::ModCallbackEvent* a_event, RE::BSTEventSource<SKSE::ModCallbackEvent>* a_eventSource) override;
+
+		RE::BSEventNotifyControl ProcessEvent(RE::InputEvent* const* a_event, RE::BSTEventSource<RE::InputEvent*>* a_eventSource) override;
 	};
 };
