@@ -1,5 +1,6 @@
 #pragma once
 
+
 namespace ModernWaitMenu
 {
 	class WeatherManager
@@ -46,23 +47,33 @@ namespace ModernWaitMenu
 		inline static float lastRX = 0.0f, lastRY = 0.0f;
 
 		// sendDPadInformation
-		inline static bool lastUp = false, lastDown = false, lastLeft = false, lastRight = false;
+		inline static std::array<bool, 4> states = { false, false, false, false };
+		inline static std::array<bool, 4> lastStates = { false, false, false, false };
+		inline static std::array<bool, 4> falseArray = { false, false, false, false }; // For easier comparison if any key is pressed
 		inline static double accumulator = 0.0;
 
 	public:
-		enum class StickType : std::uint8_t
+		enum class StickType
 		{
 			left = 0,
 			right = 1
 		};
 
-		enum class DPadType : std::uint8_t
+		enum class DPadType
 		{
 			up = 1,
 			down = 2,
 			left = 4,
 			right = 8
 		};
+
+		/**
+		* @brief Maps the parameter to the states bool array
+		*
+		* @param id The keycode that shall be mapped
+		* @param isDown The value that the mapped key should get
+		*/
+		static void updateDPad(int id, bool isDown);
 
 		/**
 		* @brief This sends controller stick information to the Menu
@@ -87,6 +98,6 @@ namespace ModernWaitMenu
 		* @param a_view The Flash-Movie-Pointer of the Menu.
 		* @param location This is the "path" inside the menu file to the function that should be called.
 		*/
-		static void sendDPadInformation(RE::GFxMovieView* a_view, const char* location, DPadType type);
+		static void sendDPadInformation(RE::GFxMovieView* a_view, const char* location);
 	};
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include <SimpleIni.h>
 
+
 namespace ModernWaitMenu
 {
 	class Settings

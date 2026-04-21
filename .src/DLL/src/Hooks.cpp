@@ -1,7 +1,8 @@
+#include "Settings.h"
+#include "logger.h"
 #include "Hooks.h"
 #include "Utilities.h"
-#include "logger.h"
-#include "Settings.h"
+
 
 namespace ModernWaitMenu
 {
@@ -14,6 +15,7 @@ namespace ModernWaitMenu
 			{
 				TimeManager::UpdateMenuTime(view, false);
 				WeatherManager::updateCurrentWeather(view, false);
+				ControlManager::sendDPadInformation(view, "_root.SleepWaitMenu_mc.onDPadInput");
 			}
 			else
 				MWM_LOG_DEBUG("Menu not found, skipping");

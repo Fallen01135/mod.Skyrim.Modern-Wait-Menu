@@ -1,9 +1,7 @@
-#include "Utilities.h"
-#include "Logger.h"
 #include "Settings.h"
-#include <windows.h>
-#include <Xinput.h>
-#pragma comment(lib, "Xinput.lib")
+#include "Logger.h"
+#include "Utilities.h"
+
 
 namespace ModernWaitMenu
 {
@@ -127,18 +125,38 @@ namespace ModernWaitMenu
 	}
 
 	// Control Manager
+	void ControlManager::updateDPad(int id, bool isDown)
+	{
+		int i = -1;
+		auto idNew = static_cast<DPadType>(id);
+		switch (idNew)
+		{
+			case DPadType::up : i = 0; break;
+			case DPadType::down : i = 1; break;
+			case DPadType::left : i = 2; break;
+			case DPadType::right : i = 3; break;
+			default:
+				return;
+		}
+
+		states[i] = isDown;
+	}
+
 	void ControlManager::sendStickInformation(RE::GFxMovieView* a_view, const char* location, StickType stickType, float x, float y)
 	{
 		float& refLastX = (stickType == StickType::left ? lastLX : lastRX);
 		float& refLastY = (stickType == StickType::left ? lastLY : lastRY);
 
 		float deadzone = 0.25f;
-		float magnitude = sqrt((x * x) + (y * y));
+		float magnitude = (x * x) + (y * y);
 
-		if (magnitude < deadzone)
+		if (magnitude < (deadzone * deadzone))
 			x = y = 0.0f;
 
 		// Only pack and send the data to the menu if we actually need to
+		// This lastX and lastY logic is not really neccesary, but it might save some ressources.
+		// Especially if the player is holding the position and is not letting it go, as the event would still keep firing.
+		// Also it might prevent stick drift. And it makes it able to be included in other scenarios.
 		if (std::abs(x - refLastX) > 0.01f || std::abs(y - refLastY) > 0.01f)
 		{
 			RE::GFxValue args[2];
@@ -152,34 +170,26 @@ namespace ModernWaitMenu
 		}
 	}
 
-	void ControlManager::sendDPadInformation(RE::GFxMovieView* a_view, const char* location, DPadType type)
+	void ControlManager::sendDPadInformation(RE::GFxMovieView* a_view, const char* location)
 	{
-		bool up = type == DPadType::up;
-		bool down = type == DPadType::down;
-		bool left = type == DPadType::left;
-		bool right = type == DPadType::right;
-
-		bool anyPressed = (up || down || left || right);
-		bool stateChanged = (up != lastUp || down != lastDown || left != lastLeft || right != lastRight);
+		// Check if something was pressed, if not we just quite
+		if (states == falseArray)
+		{
+			accumulator = 0.0;
+			return;
+		}
 
 		accumulator += RE::GetSecondsSinceLastFrame();
+
 		bool sendData = false;
-
-		if (stateChanged)
+		if (states != lastStates)
 		{
-			// If we pressed the key, this happens
-			lastUp = up;
-			lastDown = down;
-			lastLeft = left;
-			lastRight = right;
+			lastStates = states;
 
-			if (anyPressed)
-			{
-				sendData = true;
-				accumulator = 0.0;
-			}
+			sendData = true;
+			accumulator = 0.0;
 		}
-		else if (anyPressed && accumulator >= Settings::DPadInitialDelay())
+		else if (accumulator >= Settings::DPadInitialDelay())
 		{
 			// If we hold the key for "DPadInitialDelay()" amount of seconds,
 			// this will repeat until we let go of the key
@@ -190,18 +200,13 @@ namespace ModernWaitMenu
 				accumulator = 0.0;
 		}
 
-		if (!anyPressed)
-			accumulator = 0.0;
-
 		// Only send the data if we really need to. This saves ressources and improves performance.
 		if (sendData)
 		{
 			const int size = 4;
 			RE::GFxValue args[size];
-			args[0].SetBoolean(up);
-			args[1].SetBoolean(down);
-			args[2].SetBoolean(left);
-			args[3].SetBoolean(right);
+			for (int i = 0; i < size; i++)
+				args[i].SetBoolean(states[i]);
 
 			a_view->Invoke(location, nullptr, args, size);
 		}

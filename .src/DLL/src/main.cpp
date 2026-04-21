@@ -1,5 +1,5 @@
-#include "Logger.h"
 #include "Settings.h"
+#include "Logger.h"
 #include "EventProcessor.h"
 #include "Hooks.h"
 

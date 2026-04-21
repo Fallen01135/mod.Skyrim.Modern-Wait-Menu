@@ -1,6 +1,7 @@
 #include "Settings.h"
 #include "Logger.h"
 
+
 namespace ModernWaitMenu
 {
 	void Settings::Load()
@@ -36,9 +37,11 @@ namespace ModernWaitMenu
 		// Output all of the applied settings
 		MWM_LOG_INFO("Use 24 Clock: {}", bUse24Clock);
 		MWM_LOG_INFO("Use Leading Zero: {}", bUseLeadingZero);
+
 		MWM_LOG_INFO("Left Stick active: {}", bActivateLeftStick);
 		MWM_LOG_INFO("D-Pad Initial Delay: {}", fDPadInitialDelay);
 		MWM_LOG_INFO("D-Pad Repeat Rate: {}", fDPadRepeatRate);
+
 		MWM_LOG_INFO("Extra Logs: {}", bExtraLogging);
 
 		applySettings();
