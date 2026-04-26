@@ -1,4 +1,3 @@
-#include "Settings.h"
 #include "logger.h"
 #include "Hooks.h"
 #include "Utilities.h"

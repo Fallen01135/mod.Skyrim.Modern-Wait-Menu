@@ -65,8 +65,8 @@ namespace ModernWaitMenu
 				RE::GFxValue args[size];
 				args[index++].SetString(amStr);
 				args[index++].SetString(pmStr);
-				args[index++].SetBoolean(Settings::useLeadingZero());
-				args[index++].SetBoolean(Settings::is24Clock());
+				args[index++].SetBoolean(Settings::getSetting(Settings::Data::bUseLeadingZero));
+				args[index++].SetBoolean(Settings::getSetting(Settings::Data::bUse24Clock));
 				args[index++].SetBoolean(Settings::isVR());
 
 				if (index == size)
@@ -119,7 +119,7 @@ namespace ModernWaitMenu
 			for (auto event = *a_event; event; event = event->next)
 			{
 				auto type = event->GetEventType();
-				if (Settings::leftStickActive() && type == RE::INPUT_EVENT_TYPE::kThumbstick)
+				if (Settings::getSetting(Settings::Data::bActivateLeftStick) && type == RE::INPUT_EVENT_TYPE::kThumbstick)
 				{
 					auto thumbstick = static_cast<RE::ThumbstickEvent*>(event);
 					if (thumbstick->IsLeft())

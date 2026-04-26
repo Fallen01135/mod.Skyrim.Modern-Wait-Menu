@@ -12,45 +12,55 @@ namespace ModernWaitMenu
 
 		CSimpleIniA ini;
 		ini.SetUnicode();
+		ini.LoadFile(iniPath.c_str());
 
-		// Check if the ini file exists.
-		SI_Error rc = ini.LoadFile(iniPath.c_str());
-		if (rc < 0)
-		{
-			// If not, we throw an error
-			MWM_LOG_WARN("Settings: No Settings found in {}, using defaults.", iniPath);
-			return;
-		}
+		std::apply
+		(
+			[&](auto&&... defs)
+			{
+				(
+					[&](auto& def)
+					{
+						using T = std::decay_t<decltype(def.defaultValue)>;
 
-		// Retrieve the values out of the ini, if the ini is not found we use the default value
-		bUse24Clock = ini.GetBoolValue("General", "bUse24Clock", true);
-		bUseLeadingZero = ini.GetBoolValue("General", "bUseLeadingZero", true);
+						if constexpr (std::is_same_v<T, bool>)
+						{
+							def.value = ini.GetBoolValue(def.section, def.key, def.defaultValue);
+							ini.SetBoolValue(def.section, def.key, def.value);
+						}
+						else if constexpr (std::is_same_v<T, int>)
+						{
+							def.value = static_cast<int>(ini.GetLongValue(def.section, def.key, def.defaultValue));
+							ini.SetLongValue(def.section, def.key, static_cast<long>(def.value));
+						}
+						else if constexpr (std::is_same_v<T, float>)
+						{
+							def.value = static_cast<float>(ini.GetDoubleValue(def.section, def.key, def.defaultValue));
+							ini.SetDoubleValue(def.section, def.key, static_cast<double>(def.value));
+						}
+						else if constexpr (std::is_same_v<T, std::string>)
+						{
+							def.value = std::string(ini.GetValue(def.section, def.key, def.defaultValue.c_str()));
+							ini.SetValue(def.section, def.key, def.value.c_str());
+						}
 
-		bActivateLeftStick = ini.GetBoolValue("Controls", "bActivateLeftStick", true);
-		fDPadInitialDelay = static_cast<float>(ini.GetDoubleValue("Controls", "fDPadInitialDelay", 0.5));
-		fDPadRepeatRate = static_cast<float>(ini.GetDoubleValue("Controls", "fDPadRepeatRate", 0.1));
+						MWM_LOG_INFO("Setting loaded: {} = {}", def.key, def.value);
+					} (defs),
+					...
+				);
+			},
+			Data::ALL
+		);
 
-		bExtraLogging = ini.GetBoolValue("Debug", "bExtraLogging", false);
-
-		MWM_LOG_INFO("Settings: Loaded.");
-
-		// Output all of the applied settings
-		MWM_LOG_INFO("Use 24 Clock: {}", bUse24Clock);
-		MWM_LOG_INFO("Use Leading Zero: {}", bUseLeadingZero);
-
-		MWM_LOG_INFO("Left Stick active: {}", bActivateLeftStick);
-		MWM_LOG_INFO("D-Pad Initial Delay: {}", fDPadInitialDelay);
-		MWM_LOG_INFO("D-Pad Repeat Rate: {}", fDPadRepeatRate);
-
-		MWM_LOG_INFO("Extra Logs: {}", bExtraLogging);
+		ini.SaveFile(iniPath.c_str());
 
 		applySettings();
 	}
 
 	void Settings::applySettings()
 	{
-		spdlog::set_level(bExtraLogging ? spdlog::level::trace : spdlog::level::info);
-		spdlog::flush_on(bExtraLogging ? spdlog::level::trace : spdlog::level::info);
+		spdlog::set_level(getSetting(Data::bExtraLogging) ? spdlog::level::trace : spdlog::level::info);
+		spdlog::flush_on(getSetting(Data::bExtraLogging) ? spdlog::level::trace : spdlog::level::info);
 
 		_isVR = REL::Module::get().GetRuntime() == REL::Module::Runtime::VR;
 	}

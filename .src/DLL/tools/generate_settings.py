@@ -1,10 +1,28 @@
-#pragma once
+import os
+
+settings = []
+with open('settings.list', 'r') as f:
+	for line in f:
+		if line.startswith('#') or not line.strip(): continue
+		parts = [p.strip() for p in line.split('|')]
+		settings.append({'type': parts[0], 'name': parts[1], 'section': parts[2], 'default': parts[3]})
+
+items_code = ""
+tuple_entries = []
+
+for s in settings:
+	items_code += f'			inline static Item<{s["type"]}> {s["name"]}{{ "{s["section"]}", "{s["name"]}", {s["default"]}, {s["default"]} }};\n'
+	tuple_entries.append(f'				std::ref({s["name"]})')
+
+tuple_code = ",\n".join(tuple_entries)
+
+header_content = f"""#pragma once
 #include "Logger.h"
 #include <SimpleIni.h>
 
 
 namespace ModernWaitMenu
-{
+{{
 	/**
 	* @brief Manages all settings related actions.
 	* * GENERATED CODE - DO NOT MODIFY MANUALLY.
@@ -18,48 +36,37 @@ namespace ModernWaitMenu
 	* But I wanted to have an approach that is modular for all kinds of tasks.
 	*/
 	class Settings
-	{
+	{{
 	private:
 		template <typename T> struct Item
-		{
+		{{
 			const char* section;
 			const char* key;
 			T defaultValue;
 			mutable T value;
-		};
+		}};
 
-		inline static bool _isVR{ false };
+		inline static bool _isVR{{ false }};
 
 	public:
 		struct Data
-		{
-			inline static Item<bool> bUse24Clock{ "General", "bUse24Clock", true, true };
-			inline static Item<bool> bUseLeadingZero{ "General", "bUseLeadingZero", true, true };
-			inline static Item<bool> bActivateLeftStick{ "Controls", "bActivateLeftStick", true, true };
-			inline static Item<float> fDPadInitialDelay{ "Controls", "fDPadInitialDelay", 0.5f, 0.5f };
-			inline static Item<float> fDPadRepeatRate{ "Controls", "fDPadRepeatRate", 0.1f, 0.1f };
-			inline static Item<bool> bExtraLogging{ "Debug", "bExtraLogging", false, false };
-
+		{{
+{items_code}
 			static constexpr auto ALL = std::make_tuple
 			(
-				std::ref(bUse24Clock),
-				std::ref(bUseLeadingZero),
-				std::ref(bActivateLeftStick),
-				std::ref(fDPadInitialDelay),
-				std::ref(fDPadRepeatRate),
-				std::ref(bExtraLogging)
+{tuple_code}
 			);
-		};
+		}};
 
 		#pragma region Getters
 		// Getter for easier access
 		template <typename T> [[nodiscard]] static T getSetting(const Item<T>& setting)
-		{
+		{{
 			return setting.value;
-		};
+		}};
 
 		// Other
-		[[nodiscard]] static bool isVR() noexcept { return _isVR; };
+		[[nodiscard]] static bool isVR() noexcept {{ return _isVR; }};
 		#pragma endregion
 
 
@@ -76,5 +83,12 @@ namespace ModernWaitMenu
 		* @brief This applies settings values that are important for the runtime
 		*/
 		static void applySettings();
-	};
-}
+	}};
+}}
+"""
+
+with open('Settings.h', 'w', encoding='utf-8') as f:
+	f.write(header_content)
+
+print("Settings.h was generated!")
+input("Press Enter to close")

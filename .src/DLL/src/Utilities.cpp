@@ -189,15 +189,15 @@ namespace ModernWaitMenu
 			sendData = true;
 			accumulator = 0.0f;
 		}
-		else if (anyPressed && accumulator >= Settings::DPadInitialDelay())
+		else if (anyPressed && accumulator >= Settings::getSetting(Settings::Data::fDPadInitialDelay))
 		{
 			// If we hold the key for "DPadInitialDelay()" amount of seconds,
 			// this will repeat until we let go of the key
 			sendData = true;
 
-			accumulator -= Settings::DPadRepeatRate();
+			accumulator -= Settings::getSetting(Settings::Data::fDPadRepeatRate);
 
-			if (accumulator > Settings::DPadInitialDelay())
+			if (accumulator > Settings::getSetting(Settings::Data::fDPadInitialDelay))
 				accumulator = 0.0f;
 		}
 

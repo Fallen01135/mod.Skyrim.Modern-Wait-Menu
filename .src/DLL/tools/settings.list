@@ -1,0 +1,10 @@
+# Typ		| Name									| Section			| Default
+
+bool		| bUse24Clock						| General			| true
+bool		| bUseLeadingZero				| General			| true
+
+bool		| bActivateLeftStick		| Controls		| true
+float		| fDPadInitialDelay			| Controls		| 0.5f
+float		| fDPadRepeatRate				| Controls		| 0.1f
+
+bool		| bExtraLogging					| Debug				| false
