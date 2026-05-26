@@ -1,0 +1,44 @@
+===============================================================================
+LICENSE AND TERMS OF USE (PROPRIETARY)
+===============================================================================
+Project: Modern Wait Menu
+Copyright (c) 2026 Fallen011[35]
+All rights reserved.
+
+This software (including the compiled SKSE DLL, source code, and assets) 
+is proprietary. Unauthorized reproduction, modification, distribution, 
+or commercial use is strictly prohibited except as explicitly granted below.
+
+-------------------------------------------------------------------------------
+PERMISSIONS & EXCEPTIONS
+-------------------------------------------------------------------------------
+
+1. Code Usage & Learning:
+   You are explicitly permitted to study the source code, learn from it, 
+   and use logic or short code snippets for your own unique, independent mods. 
+   Blunt copy-pasting ("forking" or cloning) of large portions or the entire 
+   codebase into another project is strictly prohibited.
+
+2. No Modified DLL Re-Uploads:
+   You are NOT allowed to modify this DLL (via source changes, patching, or 
+   reverse engineering) and re-upload or distribute it as a standalone file. 
+   If you wish to fix bugs, optimize performance, or add features, please 
+   submit a Pull Request to the official repository or contact the author.
+
+3. Modpacks & Collections:
+   Inclusion of this mod in curated modlists (e.g., Wabbitjack lists, Nexus 
+   Collections) is permitted, provided that the tool downloads the original, 
+   unmodified DLL directly from its official hosting source (e.g., Nexus Mods 
+   or GitHub). Direct bundling/packaging of the DLL within a private archive 
+   is not allowed without permission.
+
+-------------------------------------------------------------------------------
+INDIVIDUAL REQUESTS & CUSTOM PERMISSIONS
+-------------------------------------------------------------------------------
+Anything not explicitly stated or permitted in the sections above is 
+prohibited by default. 
+
+However, the author is open to community collaboration. If you have a specific 
+use case, compatibility patch, or project idea that is not covered by this 
+license, please reach out to the author directly. Custom, individual 
+permissions may be granted upon consultation and mutual agreement.
