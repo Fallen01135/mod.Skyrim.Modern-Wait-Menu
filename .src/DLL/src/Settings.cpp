@@ -44,7 +44,7 @@ namespace ModernWaitMenu
 							ini.SetValue(def.section, def.key, def.value.c_str());
 						}
 
-						MWM_LOG_INFO("Setting loaded: {} = {}", def.key, def.value);
+						spdlog::info("Setting loaded: {} = {}", def.key, def.value);
 					} (defs),
 					...
 				);

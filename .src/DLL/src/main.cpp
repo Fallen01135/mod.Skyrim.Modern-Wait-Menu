@@ -29,17 +29,17 @@ void SKSEMessageHandler(SKSE::MessagingInterface::Message* message)
 			if (ui)
 			{
 				ui->GetEventSource<RE::MenuOpenCloseEvent>()->AddEventSink(eventProcessor);
-				MWM_LOG_INFO("Event Sink registered.");
+				spdlog::info("Event Sink registered.");
 			}
 			break;
 		case SKSE::MessagingInterface::kInputLoaded:
-			MWM_LOG_INFO("Input Loaded.");
+			spdlog::info("Input Loaded.");
 			SKSE::GetModCallbackEventSource()->AddEventSink(eventProcessor);
 
 			if (deviceManager)
 			{
 				deviceManager->AddEventSink(eventProcessor);
-				MWM_LOG_INFO("Input Event Sink registered.");
+				spdlog::info("Input Event Sink registered.");
 			}
 			break;
 		case SKSE::MessagingInterface::kPostLoadGame:

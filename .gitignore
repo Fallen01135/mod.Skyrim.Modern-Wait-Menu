@@ -1,30 +1,60 @@
-# Render Stuff
-.tx
-.swatch
-
-# Windows thumbnail cache files
-Thumbs.db
-Thumbs.db:encryptable
+# --- System ---
+# Windows
+[Tt]humbs.db
 ehthumbs.db
-ehthumbs_vista.db
-
-# Dump file
-*.stackdump
-
-# Folder config file
 [Dd]esktop.ini
-
-# Recycle Bin used on file shares
 $RECYCLE.BIN/
-
-# Windows Installer files
-*.cab
-*.msi
-*.msix
-*.msm
-*.msp
-
-# Windows shortcuts
 *.lnk
-/.src/DLL/.vs
-/.src/DLL/build
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# --- IDEs & EDITORS ---
+# Visual Studio Code
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/settings.json
+# IntelliJ / WebStorm / PyCharm
+.idea/
+*.iws
+*.iml
+# Visual Studio / Rider
+.vs/
+*.suo
+*.user
+
+# --- LOGS & TEMPORARY FILES ---
+*.log
+[Ll]ogs/
+*.swp
+*.bak
+*.tmp
+.cache/
+
+# --- DEPENDENCIES ---
+# Node.js
+node_modules/
+jspm_packages/
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+# Java / Maven / Gradle
+target/
+.gradle/
+build/
+
+# --- SECRET & CONFIGS ---
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.pem
+*.key

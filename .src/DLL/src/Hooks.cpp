@@ -1,6 +1,6 @@
 #include "logger.h"
 #include "Hooks.h"
-#include "Utilities.h"
+#include "Managers.h"
 
 
 namespace ModernWaitMenu
@@ -16,7 +16,7 @@ namespace ModernWaitMenu
 				WeatherManager::updateCurrentWeather(view, false);
 			}
 			else
-				MWM_LOG_DEBUG("Menu not found, skipping");
+				spdlog::debug("Menu not found, skipping");
 		}
 
 		return _ProcessMessage(a_this, a_message);

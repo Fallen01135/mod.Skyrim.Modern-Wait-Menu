@@ -1,7 +1,7 @@
 #include "Settings.h"
 #include "Logger.h"
 #include "EventProcessor.h"
-#include "Utilities.h"
+#include "Managers.h"
 
 
 namespace ModernWaitMenu
@@ -30,7 +30,7 @@ namespace ModernWaitMenu
 						if (auto view = menu->uiMovie)
 							if (view)
 							{
-								MWM_LOG_DEBUG("Cursor visible: {}", bool(a_event->numArg));
+								spdlog::debug("Cursor visible: {}", bool(a_event->numArg));
 								view->SetVariable("_root.mc_Cursor._visible", a_event->numArg);
 							}
 			}
@@ -57,7 +57,7 @@ namespace ModernWaitMenu
 				std::string amStr = gameSettings ? gameSettings->GetSetting("sTimeAM")->GetString() : "AM";
 				std::string pmStr = gameSettings ? gameSettings->GetSetting("sTimePM")->GetString() : "PM";
 				if (!gameSettings)
-					MWM_LOG_WARN("Game Settings could not be loaded, using pre defined AM and PM instead.");
+					spdlog::warn("Game Settings could not be loaded, using pre defined AM and PM instead.");
 
 				// This sets some variables inside of the ActionScript 2 code of the Menu
 				const int size = 5;
@@ -75,16 +75,16 @@ namespace ModernWaitMenu
 						view->SetVariable(fmt::format("_root.SleepWaitMenu_mc.{}", as2VarNames[i]).c_str(), args[i]);
 				}
 				else
-					MWM_LOG_CRITICAL("Argument count not correct! Size: {}; Index: {}", size, index);
+					spdlog::critical("Argument count not correct! Size: {}; Index: {}", size, index);
 
 				// Run other functions
 				TimeManager::UpdateMenuTime(view, true);
 				WeatherManager::updateCurrentWeather(view, true);
 
-				MWM_LOG_DEBUG("Wait menu opened.");
+				spdlog::debug("Wait menu opened.");
 			}
 			else
-				MWM_LOG_CRITICAL("SleepWaitMenu could not be found and opened!");
+				spdlog::critical("SleepWaitMenu could not be found and opened!");
 		}
 		else if (a_event && !a_event->opening && a_event->menuName == RE::SleepWaitMenu::MENU_NAME)
 			setView(nullptr);
@@ -101,11 +101,11 @@ namespace ModernWaitMenu
 			auto it = eventMap.find(a_event->eventName.c_str());
 			if (it != eventMap.end())
 			{
-				MWM_LOG_DEBUG("Mod Event was called: {}", a_event->eventName.c_str());
+				spdlog::debug("Mod Event was called: {}", a_event->eventName.c_str());
 				it->second(a_event); // If we found the key, we run the code that is attached to it.
 			}
 			else
-				MWM_LOG_DEBUG("Mod Event not registered: {}", a_event->eventName.c_str());
+				spdlog::debug("Mod Event not registered: {}", a_event->eventName.c_str());
 		}
 
 		return RE::BSEventNotifyControl::kContinue;
