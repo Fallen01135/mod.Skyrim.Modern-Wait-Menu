@@ -1,17 +1,63 @@
-#include "Settings.h"
-#include "Logger.h"
-#include "Managers.h"
+#include "Managers.hpp"
+#include "RE/C/Calendar.h"
+#include "RE/G/GFxMovieView.h"
+#include "RE/G/GFxValue.h"
+#include "RE/M/Misc.h"
+#include "RE/S/Sky.h"
+#include "REL/Module.h"
+#include "Settings.hpp"
+#include "SimpleSettings.hpp"
+#include "SKSE/Interfaces.h"
+#include "spdlog/common.h"
+#include "spdlog/spdlog.h"
+#include <cmath>
+#include <cstdlib>
+#include <format>
+#include <string>
 
 
 namespace ModernWaitMenu
 {
-	// Weather Manager
-	void WeatherManager::updateCurrentWeather(RE::GFxMovieView* a_view, bool a_force)
+	// SettingsManager
+	void SettingsManager::Load()
 	{
-		// Retrieve the current weather
+		// Retrieve the Plugin name and get the ini file.
+		auto pluginName = SKSE::PluginDeclaration::GetSingleton()->GetName();
+		std::string iniPath = std::format("Data/SKSE/Plugins/{}.ini", pluginName);
+
+		SettingsLib::SetCommentStyle(SettingsLib::CommentStyle::Hash);
+		SettingsLib::Load<Settings>(iniPath, SettingsLib::LoadMode::ReadAndRepair);
+
+		applySettings();
+	}
+
+	void SettingsManager::applySettings()
+	{
+		spdlog::set_level(Settings::bExtraLogging ? spdlog::level::trace : spdlog::level::info);
+		spdlog::flush_on(Settings::bExtraLogging ? spdlog::level::trace : spdlog::level::info);
+
+		_isVR = REL::Module::get().GetRuntime() == REL::Module::Runtime::VR;
+
+		SettingsLib::Dump<Settings>
+			(
+				[](const auto &setting)
+				{
+					spdlog::debug(std::format("Loaded Settings {} with value {}", setting.info.key, setting));
+				}
+			);
+	}
+
+	// Weather Manager
+	void WeatherManager::updateCurrentWeather(RE::GFxMovieView *a_view, bool a_force)
+	{
+		// Retrieve the current sky
 		auto sky = RE::Sky::GetSingleton();
+		if (!sky)
+			return;
+
+		// Retrieve the current weather
 		auto currentWeather = sky->currentWeather;
-		if (!sky || !currentWeather)
+		if (!currentWeather)
 			return;
 
 		/*
@@ -50,10 +96,10 @@ namespace ModernWaitMenu
 	}
 
 	// Time Manager
-	void TimeManager::UpdateMenuTime(RE::GFxMovieView* a_view, bool a_force)
+	void TimeManager::UpdateMenuTime(RE::GFxMovieView *a_view, bool a_force)
 	{
 		// Retrieve the calender which holds all information about time and date.
-		RE::Calendar* calendar = RE::Calendar::GetSingleton();
+		RE::Calendar *calendar = RE::Calendar::GetSingleton();
 		if (!calendar || !calendar->gameHour)
 			return;
 
@@ -99,28 +145,52 @@ namespace ModernWaitMenu
 		// Convert the 24 hours with the modulo of 12.
 		int hours12 = ((hours24 % 12) == 0) ? 12 : (hours24 % 12);
 
-		// Pack all data.
-		std::string s_minutes = fmt::format("{:02d}", minutes);
-		std::string s_day = fmt::format("{:02d}", static_cast<int>(calendar->GetDay()));
-		std::string s_dayName = calendar->GetDayName();
-		std::string s_month = calendar->GetMonthName();
+		// Date string text replacement
+		std::string dateString = Settings::sDateString;
 
-		const int size = 7;
+		int dayNumber = static_cast<int>(calendar->GetDay());
+		int monthNumber = static_cast<int>(calendar->GetMonth()) + 1;
+		int yearNumber = static_cast<int>(calendar->GetYear());
+
+		std::string dayName = calendar->GetDayName();
+		std::string monthName = calendar->GetMonthName();
+
+		ReplaceInText(dateString, "{d}", std::to_string(dayNumber));
+		ReplaceInText(dateString, "{dd}", std::format("{:02d}", dayNumber));
+		ReplaceInText(dateString, "{DD}", dayName);
+
+		ReplaceInText(dateString, "{m}", std::to_string(monthNumber));
+		ReplaceInText(dateString, "{mm}", std::format("{:02d}", monthNumber));
+		ReplaceInText(dateString, "{MM}", monthName);
+
+		ReplaceInText(dateString, "{yy}", std::to_string(yearNumber));
+		ReplaceInText(dateString, "{YY}", std::format("4E {}", yearNumber));
+
+		spdlog::debug("New date string: {}" + dateString);
+
+		// Pack all data.
+		std::string s_minutes = std::format("{:02d}", minutes);
+
+		const int size = 4;
 		int index = 0;
 		RE::GFxValue args[size];
 		args[index++].SetNumber(hours12);
 		args[index++].SetNumber(hours24);
-		args[index++].SetString(s_minutes.c_str());
-		args[index++].SetString(s_day.c_str());
-		args[index++].SetString(s_dayName.c_str());
-		args[index++].SetString(s_month.c_str());
-		args[index++].SetNumber(calendar->GetYear());
+		args[index++].SetString(s_minutes);
+		args[index++].SetString(dateString);
 
 		// Send the data to the menu
 		if (size == index)
 			a_view->Invoke("_root.SleepWaitMenu_mc.setTimeAndDate", nullptr, args, size);
 		else
 			spdlog::critical("Argument count not correct! Size: {}; Index: {}", size, index);
+	}
+
+	void TimeManager::ReplaceInText(std::string &text, const std::string &search, const std::string &replace)
+	{
+		size_t pos;
+		while ((pos = text.find(search)) != std::string::npos)
+			text.replace(pos, search.length(), replace);
 	}
 
 	// Control Manager
@@ -130,10 +200,10 @@ namespace ModernWaitMenu
 		auto idNew = static_cast<DPadType>(id);
 		switch (idNew)
 		{
-			case DPadType::up : i = 0; break;
-			case DPadType::down : i = 1; break;
-			case DPadType::left : i = 2; break;
-			case DPadType::right : i = 3; break;
+			case DPadType::up: i = 0; break;
+			case DPadType::down: i = 1; break;
+			case DPadType::left: i = 2; break;
+			case DPadType::right: i = 3; break;
 			default:
 				return;
 		}
@@ -145,10 +215,10 @@ namespace ModernWaitMenu
 		}
 	}
 
-	void ControlManager::sendStickInformation(RE::GFxMovieView* a_view, const char* location, StickType stickType, float x, float y)
+	void ControlManager::sendStickInformation(RE::GFxMovieView *a_view, const char *location, StickType stickType, float x, float y)
 	{
-		float& refLastX = (stickType == StickType::left ? lastLX : lastRX);
-		float& refLastY = (stickType == StickType::left ? lastLY : lastRY);
+		float &refLastX = (stickType == StickType::left ? lastLX : lastRX);
+		float &refLastY = (stickType == StickType::left ? lastLY : lastRY);
 
 		float deadzone = 0.25f;
 		float magnitude = (x * x) + (y * y);
@@ -173,9 +243,8 @@ namespace ModernWaitMenu
 		}
 	}
 
-	void ControlManager::sendDPadInformation(RE::GFxMovieView* a_view, const char* location)
+	void ControlManager::sendDPadInformation(RE::GFxMovieView *a_view, const char *location)
 	{
-		// Check if something was pressed, if not we just quite
 		bool anyPressed = states != falseArray;
 		bool stateChanged = states != lastStates;
 
@@ -189,22 +258,20 @@ namespace ModernWaitMenu
 			sendData = true;
 			accumulator = 0.0f;
 		}
-		else if (anyPressed && accumulator >= Settings::getSetting(Settings::Data::fDPadInitialDelay))
+		else if (anyPressed && accumulator >= Settings::fDPadInitialDelay)
 		{
 			// If we hold the key for "DPadInitialDelay()" amount of seconds,
 			// this will repeat until we let go of the key
 			sendData = true;
 
-			accumulator -= Settings::getSetting(Settings::Data::fDPadRepeatRate);
+			accumulator -= Settings::fDPadRepeatRate;
 
-			if (accumulator > Settings::getSetting(Settings::Data::fDPadInitialDelay))
+			if (accumulator > Settings::fDPadInitialDelay)
 				accumulator = 0.0f;
 		}
 
 		if (!anyPressed)
-		{
 			accumulator = 0.0f;
-		}
 
 		// Only send the data if we really need to. This saves ressources and improves performance.
 		if (sendData)

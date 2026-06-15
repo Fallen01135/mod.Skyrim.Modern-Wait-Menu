@@ -1,58 +1,80 @@
 #pragma once
 
 
+#include "RE/G/GFxMovieView.h"
+#include "RE/T/TESWeather.h"
+#include <array>
+#include <string>
+
+
 namespace ModernWaitMenu
 {
+	class SettingsManager
+	{
+		private:
+		inline static bool _isVR{false};
+
+		public:
+		// getter/setter
+		[[nodiscard]] static bool isVR() noexcept { return _isVR; };
+
+		// Other
+		static void Load();
+		static void applySettings();
+	};
+
 	class WeatherManager
 	{
-	private:
+		private:
 		// For me: inline static is technically the same as in Java static
-		inline static RE::TESWeather* lastWeather = nullptr;
+		inline static RE::TESWeather *lastWeather = nullptr;
 
-	public:
+		public:
 		/**
 		* @brief Updates the Weather of the Wait Menu.
-		* 
+		*
 		* It will send the collected informations into the Wait menu.
-		* 
+		*
 		* @param a_view The Flash-Movie-Pointer of the Menu.
 		* @param a_force If true, the update will be forced even without any weather change.
 		*/
-		static void updateCurrentWeather(RE::GFxMovieView* a_view, bool a_force);
+		static void updateCurrentWeather(RE::GFxMovieView *a_view, bool a_force);
 	};
 
 	class TimeManager
 	{
-	private:
+		private:
 		inline static int lastHours = -1;
 		inline static int lastMinutes = -1;
 
-	public:
+		static void ReplaceInText(std::string &text, const std::string &search, const std::string &replace);
+
+		public:
 		/**
 		* @brief Updates the Time and date of the Wait Menu.
-		* 
+		*
 		* It will send the collected informations into the Wait menu.
-		* 
+		*
 		* @param a_view The Flash-Movie-Pointer of the Menu.
 		* @param a_force If true, the update will be forced even without any Time change.
 		*/
-		static void UpdateMenuTime(RE::GFxMovieView* a_view, bool a_force);
+		static void UpdateMenuTime(RE::GFxMovieView *a_view, bool a_force);
 	};
 
 	class ControlManager
 	{
-	private:
+		private:
 		// sendStickInformation
 		inline static float lastLX = 0.0f, lastLY = 0.0f;
 		inline static float lastRX = 0.0f, lastRY = 0.0f;
 
 		// sendDPadInformation
-		inline static std::array<bool, 4> states = { false, false, false, false };
-		inline static std::array<bool, 4> lastStates = { false, false, false, false };
-		inline static std::array<bool, 4> falseArray = { false, false, false, false }; // For easier comparison if any key is pressed
+		inline static std::array<bool, 4> states = {false, false, false, false};
+		inline static std::array<bool, 4> lastStates = {false, false, false, false};
+		inline static std::array<bool, 4> falseArray = {false, false, false, false}; // For easier comparison if any key is pressed
 		inline static float accumulator = 0.0f;
 
-	public:
+		public:
 		enum class StickType
 		{
 			left = 0,
@@ -86,7 +108,7 @@ namespace ModernWaitMenu
 		* @param location This is the "path" inside the menu file to the function that should be called.
 		* @param left If this should send the Left or Right stick information to the menu.
 		*/
-		static void sendStickInformation(RE::GFxMovieView* a_view, const char* location, StickType stickType, float x, float y);
+		static void sendStickInformation(RE::GFxMovieView *a_view, const char *location, StickType stickType, float x, float y);
 
 		/**
 		* @brief This sends gamepads D-Pad information to the Menu
@@ -98,6 +120,6 @@ namespace ModernWaitMenu
 		* @param a_view The Flash-Movie-Pointer of the Menu.
 		* @param location This is the "path" inside the menu file to the function that should be called.
 		*/
-		static void sendDPadInformation(RE::GFxMovieView* a_view, const char* location);
+		static void sendDPadInformation(RE::GFxMovieView *a_view, const char *location);
 	};
 }

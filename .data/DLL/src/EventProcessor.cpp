@@ -1,44 +1,29 @@
-#include "Settings.h"
-#include "Logger.h"
-#include "EventProcessor.h"
-#include "Managers.h"
+#include "Callbacks.hpp"
+#include "EventProcessor.hpp"
+#include "Managers.hpp"
+#include "RE/B/BSTEvent.h"
+#include "RE/B/ButtonEvent.h"
+#include "RE/G/GameSettingCollection.h"
+#include "RE/G/GFxValue.h"
+#include "RE/I/InputDevices.h"
+#include "RE/I/InputEvent.h"
+#include "RE/M/MenuOpenCloseEvent.h"
+#include "RE/S/SleepWaitMenu.h"
+#include "RE/T/ThumbstickEvent.h"
+#include "RE/U/UI.h"
+#include "Settings.hpp"
+#include "SKSE/Events.h"
+#include "spdlog/spdlog.h"
+#include <format>
+#include <iterator>
+#include <list>
+#include <string>
 
 
 namespace ModernWaitMenu
 {
-	using EventHandler = std::function<void(const SKSE::ModCallbackEvent*)>;
-
-	/**
-	* @brief This is a collection of all supported Mod Events that this plugin supports and uses.
-	* 
-	* This was made in favour of more organisation and less if/case statements.
-	* More information about each entries, check the entries itself.
-	* 
-	* For a demonstration of how to use it check the code below of the "ModCallbackEvent".
-	*/
-	static std::unordered_map<std::string, EventHandler> eventMap =
-	{
-		/*
-			MWMShowMouseCursor: If the event is called, we disable or enable the mouse cursor.
-		*/
-		{
-			"MWMShowMouseCursor", [](const SKSE::ModCallbackEvent* a_event)
-			{
-				auto ui = RE::UI::GetSingleton();
-				if (ui->IsMenuOpen("Cursor Menu"))
-					if (auto menu = ui->GetMenu("Cursor Menu"))
-						if (auto view = menu->uiMovie)
-							if (view)
-							{
-								spdlog::debug("Cursor visible: {}", bool(a_event->numArg));
-								view->SetVariable("_root.mc_Cursor._visible", a_event->numArg);
-							}
-			}
-		}
-	};
-
-	RE::BSEventNotifyControl EventProcessor::ProcessEvent(const RE::MenuOpenCloseEvent* a_event,
-		RE::BSTEventSource<RE::MenuOpenCloseEvent>*)
+	RE::BSEventNotifyControl EventProcessor::ProcessEvent(const RE::MenuOpenCloseEvent *a_event,
+		RE::BSTEventSource<RE::MenuOpenCloseEvent> *)
 	{
 		if (a_event && a_event->opening && a_event->menuName == RE::SleepWaitMenu::MENU_NAME)
 		{
@@ -50,6 +35,7 @@ namespace ModernWaitMenu
 			if (view)
 			{
 				setView(view);
+				ModernWaitMenu::SettingsManager::Load();
 
 				// We get the game settings for AM and PM, so we do not need to use translation strings.
 				// Fallback if not found we use AM and PM
@@ -60,22 +46,28 @@ namespace ModernWaitMenu
 					spdlog::warn("Game Settings could not be loaded, using pre defined AM and PM instead.");
 
 				// This sets some variables inside of the ActionScript 2 code of the Menu
-				const int size = 5;
+				const size_t size = std::size(as2VarNames);
 				int index = 0;
 				RE::GFxValue args[size];
 				args[index++].SetString(amStr);
 				args[index++].SetString(pmStr);
-				args[index++].SetBoolean(Settings::getSetting(Settings::Data::bUseLeadingZero));
-				args[index++].SetBoolean(Settings::getSetting(Settings::Data::bUse24Clock));
-				args[index++].SetBoolean(Settings::isVR());
+				args[index++].SetBoolean(Settings::bUseLeadingZero);
+				args[index++].SetBoolean(Settings::bUse24Clock);
+				args[index++].SetBoolean(Settings::bUseCustomCursor);
 
 				if (index == size)
 				{
-					for (size_t i = 0; i < size; i++)
-						view->SetVariable(fmt::format("_root.SleepWaitMenu_mc.{}", as2VarNames[i]).c_str(), args[i]);
+					int argIndex = 0;
+					for (const auto &miep : as2VarNames)
+						view->SetVariable(std::format("_root.SleepWaitMenu_mc.{}", miep).c_str(), args[argIndex++]);
 				}
 				else
 					spdlog::critical("Argument count not correct! Size: {}; Index: {}", size, index);
+
+				// For VR compatibility
+				RE::GFxValue arg;
+				arg.SetBoolean(SettingsManager::isVR());
+				view->Invoke("_root.SleepWaitMenu_mc.setVR", nullptr, &arg, args->GetArraySize());
 
 				// Run other functions
 				TimeManager::UpdateMenuTime(view, true);
@@ -92,8 +84,8 @@ namespace ModernWaitMenu
 		return RE::BSEventNotifyControl::kContinue;
 	};
 
-	RE::BSEventNotifyControl EventProcessor::ProcessEvent(const SKSE::ModCallbackEvent* a_event,
-		RE::BSTEventSource<SKSE::ModCallbackEvent>*)
+	RE::BSEventNotifyControl EventProcessor::ProcessEvent(const SKSE::ModCallbackEvent *a_event,
+		RE::BSTEventSource<SKSE::ModCallbackEvent> *)
 	{
 		if (a_event)
 		{
@@ -111,38 +103,38 @@ namespace ModernWaitMenu
 		return RE::BSEventNotifyControl::kContinue;
 	}
 
-	RE::BSEventNotifyControl EventProcessor::ProcessEvent(RE::InputEvent* const* a_event,
-		RE::BSTEventSource<RE::InputEvent*>*)
+	RE::BSEventNotifyControl EventProcessor::ProcessEvent(RE::InputEvent *const *a_event,
+		RE::BSTEventSource<RE::InputEvent *> *)
 	{
 		if (a_event && *a_event && isSleepWaitMenuOpen())
 		{
 			for (auto event = *a_event; event; event = event->next)
 			{
 				auto type = event->GetEventType();
-				if (Settings::getSetting(Settings::Data::bActivateLeftStick) && type == RE::INPUT_EVENT_TYPE::kThumbstick)
+				if (Settings::bActivateLeftStick && type == RE::INPUT_EVENT_TYPE::kThumbstick)
 				{
-					auto thumbstick = static_cast<RE::ThumbstickEvent*>(event);
+					auto thumbstick = static_cast<RE::ThumbstickEvent *>(event);
 					if (thumbstick->IsLeft())
 						ControlManager::sendStickInformation
 						(
 							getView(),
 							"_root.SleepWaitMenu_mc.onStickLeft",
-							ControlManager::StickType::left, 
-							thumbstick->xValue, 
+							ControlManager::StickType::left,
+							thumbstick->xValue,
 							thumbstick->yValue
 						);
 				}
 				else if (type == RE::INPUT_EVENT_TYPE::kButton)
 				{
-					auto button = static_cast<RE::ButtonEvent*>(event);
+					auto button = static_cast<RE::ButtonEvent *>(event);
 					if (button->GetDevice() == RE::INPUT_DEVICE::kGamepad)
 					{
 						ControlManager::DPadType id = static_cast<ControlManager::DPadType>(button->idCode);
 						if
-						(
-							id == ControlManager::DPadType::left ||
-							id == ControlManager::DPadType::right
-						)
+							(
+								id == ControlManager::DPadType::left ||
+								id == ControlManager::DPadType::right
+							)
 						{
 							ControlManager::updateDPad(button->idCode, button->IsPressed());
 							ControlManager::sendDPadInformation(getView(), "_root.SleepWaitMenu_mc.onDPadInput");

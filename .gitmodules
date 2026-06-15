@@ -1,0 +1,6 @@
+[submodule ".modules/CommonLibSSE-NG"]
+	path = .modules/CommonLibSSE-NG
+	url = https://github.com/CharmedBaryon/CommonLibSSE-NG.git
+[submodule ".modules/library-ActionScript2-Skyrim"]
+	path = .modules/library-ActionScript2-Skyrim
+	url = https://github.com/Fallen01135/library-ActionScript2-Skyrim.git

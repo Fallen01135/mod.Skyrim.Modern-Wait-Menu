@@ -23,8 +23,5 @@
 *.eot binary
 *.ttf binary
 
-# *.zip filter=lfs diff=lfs merge=lfs -text
-# *.mp4 filter=lfs diff=lfs merge=lfs -text
-
 # Alle .txt Dateien im Ordner Interface/Translations/
 Interface/Translations/*.txt text working-tree-encoding=utf-16le-bom eol=crlf

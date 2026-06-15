@@ -1,7 +1,15 @@
-#include "Settings.h"
-#include "Logger.h"
+#include "Logger.hpp"
+#include "SKSE/Impl/PCH.h"
+#include "SKSE/Interfaces.h"
+#include "SKSE/Logger.h"
+#include "spdlog/common.h"
+#include "spdlog/logger.h"
+#include "spdlog/spdlog.h"
+#include <format>
+#include <memory>
 #include <spdlog/sinks/basic_file_sink.h>
-#include <shlobj.h>
+#include <utility>
+
 
 namespace ModernWaitMenu
 {

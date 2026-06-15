@@ -1,6 +1,4 @@
 #pragma once
-#include <spdlog/spdlog.h>
-#include <source_location>
 
 
 namespace ModernWaitMenu

@@ -1,12 +1,18 @@
 #pragma once
 
 
+#include "RE/I/IMenu.h"
+#include "RE/S/SleepWaitMenu.h"
+#include "RE/U/UIMessage.h"
+#include "REL/Relocation.h"
+
+
 namespace ModernWaitMenu
 {
 	class SleepWaitMenuHook
 	{
-	private:
-		using ProcessMessage_t = RE::UI_MESSAGE_RESULTS(RE::SleepWaitMenu*, RE::UIMessage&);
+		private:
+		using ProcessMessage_t = RE::UI_MESSAGE_RESULTS(RE::SleepWaitMenu *, RE::UIMessage &);
 		static inline REL::Relocation<ProcessMessage_t> _ProcessMessage;
 
 		/**
@@ -17,12 +23,12 @@ namespace ModernWaitMenu
 		*
 		* @param a_this This is the current instance of the SleepWaitMenu.
 		* @param a_message The message object which explains all the current UI-Events (Update, Hotkeys, etc..)
-		* 
+		*
 		* @return The result. Was our message accepted?
 		*/
-		static RE::UI_MESSAGE_RESULTS ProcessMessage_Hook(RE::SleepWaitMenu* a_this, RE::UIMessage& a_message);
+		static RE::UI_MESSAGE_RESULTS ProcessMessage_Hook(RE::SleepWaitMenu *a_this, RE::UIMessage &a_message);
 
-	public:
+		public:
 		/**
 		* (No quaranty that all of this is correct)
 		* @brief This installs the Hook for the SleepWaitMenu through overwriting the Virtual Function Table (VTable).

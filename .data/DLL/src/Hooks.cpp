@@ -1,11 +1,17 @@
-#include "logger.h"
-#include "Hooks.h"
-#include "Managers.h"
+#include "Hooks.hpp"
+#include "Managers.hpp"
+#include "RE/I/IMenu.h"
+#include "RE/Offsets_VTABLE.h"
+#include "RE/S/SleepWaitMenu.h"
+#include "RE/U/UIMessage.h"
+#include "REL/Relocation.h"
+#include "spdlog/spdlog.h"
+#include <cstdarg>
 
 
 namespace ModernWaitMenu
 {
-	RE::UI_MESSAGE_RESULTS SleepWaitMenuHook::ProcessMessage_Hook(RE::SleepWaitMenu* a_this, RE::UIMessage& a_message)
+	RE::UI_MESSAGE_RESULTS SleepWaitMenuHook::ProcessMessage_Hook(RE::SleepWaitMenu *a_this, RE::UIMessage &a_message)
 	{
 		if (a_message.type == RE::UI_MESSAGE_TYPE::kUpdate && a_this && a_this->uiMovie)
 		{

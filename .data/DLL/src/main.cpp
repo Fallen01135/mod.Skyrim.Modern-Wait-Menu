@@ -1,24 +1,16 @@
-#include "Settings.h"
-#include "Logger.h"
-#include "EventProcessor.h"
-#include "Hooks.h"
+#include "EventProcessor.hpp"
+#include "Hooks.hpp"
+#include "Logger.hpp"
+#include "RE/B/BSInputDeviceManager.h"
+#include "RE/M/MenuOpenCloseEvent.h"
+#include "RE/U/UI.h"
+#include "SKSE/API.h"
+#include "SKSE/Interfaces.h"
+#include "spdlog/spdlog.h"
+#include "Managers.hpp"
 
-#ifndef FTA_VERSION_INCLUDED
-	#define FTA_VERSION_INCLUDED
 
-	#define MAKE_STR_HELPER(a_str) #a_str
-	#define MAKE_STR(a_str) MAKE_STR_HELPER(a_str)
-
-	#define FTA_VERSION_MAJOR 1
-	#define FTA_VERSION_MINOR 0
-	#define FTA_VERSION_PATCH 0
-	#define FTA_VERSION_BETA 0
-	#define FTA_VERSION_VERSTRING   \
-		MAKE_STR(FTA_VERSION_MAJOR) \
-		"." MAKE_STR(FTA_VERSION_MINOR) "." MAKE_STR(FTA_VERSION_PATCH) "." MAKE_STR(FTA_VERSION_BETA)
-#endif
-
-void SKSEMessageHandler(SKSE::MessagingInterface::Message* message)
+void SKSEMessageHandler(SKSE::MessagingInterface::Message *message)
 {
 	auto ui = RE::UI::GetSingleton();
 	auto eventProcessor = ModernWaitMenu::EventProcessor::GetSingleton();
@@ -51,18 +43,25 @@ void SKSEMessageHandler(SKSE::MessagingInterface::Message* message)
 	}
 }
 
-SKSEPluginLoad(const SKSE::LoadInterface* skse)
+SKSEPluginLoad(const SKSE::LoadInterface *skse)
 {
 	SKSE::Init(skse);
 	ModernWaitMenu::Logger::Init();
+	spdlog::info("Modern Wait Menu is loading...");
 
 	if (skse->IsEditor())
 		return false;
 
 	// Retrieve Settings and Initialize Hooks and Events
-	ModernWaitMenu::Settings::Load();
-	SKSE::GetMessagingInterface()->RegisterListener(SKSEMessageHandler);
-	ModernWaitMenu::SleepWaitMenuHook::Install();
+	ModernWaitMenu::SettingsManager::Load();
+	spdlog::info("Settings loaded...");
 
+	SKSE::GetMessagingInterface()->RegisterListener(SKSEMessageHandler);
+	spdlog::info("SKSE Message Handler registered...");
+
+	ModernWaitMenu::SleepWaitMenuHook::Install();
+	spdlog::info("Hooks prepared...");
+
+	spdlog::info("Modern Wait Menu loaded!");
 	return true;
 }
