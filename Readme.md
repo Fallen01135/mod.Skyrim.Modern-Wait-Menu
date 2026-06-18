@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/License-Proprietary-red.svg)](https://github.com/Fallen01135/mod.Skyrim.Modern-Wait-Menu/blob/main/LICENSE)
 ![Platform](https://img.shields.io/badge/Platform-Windows-blue.svg)
 ![Game](https://img.shields.io/badge/Game-Skyrim_SE/VR-blue.svg)
-[![Release](https://img.shields.io/badge/Release-2.1.0-blue.svg)](https://www.nexusmods.com/skyrimspecialedition/mods/117661)
+[![Release](https://img.shields.io/badge/Release-2.1.1-blue.svg)](https://www.nexusmods.com/skyrimspecialedition/mods/117661)
 
 Modern Wait Menu is a complete overhaul and redesign of Skyrims Wait & Rest Menu inspired by modern UI elements in games like Cyberpunk 2077 and The Witcher 3.
 This Repository contains all the source code for this mod, including the dll source code, as well as flash elements.
