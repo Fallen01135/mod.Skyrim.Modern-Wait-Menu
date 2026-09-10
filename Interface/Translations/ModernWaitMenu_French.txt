@@ -1,12 +1,12 @@
 //-----------------------------------------------------------\\
 || V All Strings for the Wait Menu                         V ||
 \\-----------------------------------------------------------//
-$fta_Confirm	Confirm
-$fta_Cancel	Cancel
-$fta_SWITCH_DAY	Days
-$fta_SWITCH_HOURS	Hours
+$fta_Confirm	Confirmer
+$fta_Cancel	Annuler
+$fta_SWITCH_DAY	Jours
+$fta_SWITCH_HOURS	Heures
 
-$fta_HOUR	HOUR(S)
-$fta_DAY	DAY(S)
-$fta_REST	REST
-$fta_WAIT	WAIT
+$fta_HOUR	HERUE(S)
+$fta_DAY	JOUR(S)
+$fta_REST	DORMIIR
+$fta_WAIT	ATTENDRE
