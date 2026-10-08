@@ -1,0 +1,17 @@
+{
+	"zipName": "Modern Wait Menu.zip",
+	"outputDir": "release",
+	"include": [
+		"Interface",
+		"SKSE",
+		"ModernWaitMenu.esl"
+	],
+	"external": [
+		{
+			"root": "../AS2 Library",
+			"include": [
+				"Interface/Shared Elements/PlatformButtons.swf"
+			]
+		}
+	]
+}

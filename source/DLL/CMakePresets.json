@@ -1,0 +1,99 @@
+{
+	"version": 3,
+	"configurePresets": [
+		{
+			"name": "cmake-dev",
+			"hidden": true,
+			"binaryDir": "${sourceDir}/build",
+			"warnings": {
+				"dev": true,
+				"deprecated": true
+			},
+			"errors": {
+				"deprecated": true
+			}
+		},
+		{
+			"name": "vcpkg",
+			"hidden": true,
+			"cacheVariables": {
+				"CMAKE_TOOLCHAIN_FILE": {
+					"type": "STRING",
+					"value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+				}
+			}
+		},
+		{
+			"name": "windows",
+			"hidden": true,
+			"cacheVariables": {
+				"CMAKE_MSVC_RUNTIME_LIBRARY": {
+					"type": "STRING",
+					"value": "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+				},
+				"VCPKG_TARGET_TRIPLET": {
+					"type": "STRING",
+					"value": "x64-windows-static"
+				}
+			}
+		},
+		{
+			"name": "vr",
+			"hidden": true,
+			"binaryDir": "${sourceDir}/build-vr",
+			"cacheVariables": {
+				"BUILD_SKYRIMVR": {
+					"type": "BOOL",
+					"value": "ON"
+				}
+			}
+		},
+		{
+			"name": "vs2026-windows",
+			"generator": "Visual Studio 18 2026",
+			"toolset": "v145",
+			"architecture": {
+				"value": "x64",
+				"strategy": "set"
+			},
+			"cacheVariables": {
+				"CMAKE_CXX_FLAGS": "/EHsc /MP /W4",
+				"CMAKE_CXX_FLAGS_RELEASE": "/O2 /DNDEBUG"
+			},
+			"inherits": [
+				"cmake-dev",
+				"vcpkg",
+				"windows"
+			]
+		},
+		{
+			"name": "vs2026-windows-vr",
+			"inherits": [
+				"vr",
+				"vs2026-windows"
+			]
+		}
+	],
+	"buildPresets": [
+		{
+			"name": "vs2026-windows-release",
+			"configurePreset": "vs2026-windows",
+			"configuration": "Release"
+		},
+		{
+			"name": "vs2026-windows-debug",
+			"configurePreset": "vs2026-windows",
+			"configuration": "Debug"
+		},
+		{
+			"name": "vs2026-windows-vr-release",
+			"configurePreset": "vs2026-windows-vr",
+			"configuration": "Release"
+		},
+		{
+			"name": "vs2026-windows-vr-debug",
+			"configurePreset": "vs2026-windows-vr",
+			"configuration": "Debug"
+		}
+	]
+}

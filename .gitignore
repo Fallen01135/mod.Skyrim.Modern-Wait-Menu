@@ -61,3 +61,8 @@ build/
 
 /.data/DLL/.xmake
 /.data/DLL/vsxmake2026
+
+SKSE/Plugins/Modern-Wait-Menu.dll
+SKSE/Plugins/Modern-Wait-Menu.pdb
+/release
+/source/DLL/generated

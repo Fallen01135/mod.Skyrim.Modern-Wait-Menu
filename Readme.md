@@ -1,59 +1,74 @@
 # Modern Wait Menu
 
-[![License](https://img.shields.io/badge/License-Proprietary-red.svg)](https://github.com/Fallen01135/mod.Skyrim.Modern-Wait-Menu/blob/main/LICENSE)
+[![License](https://img.shields.io/badge/License-Source--Available-orange.svg)](LICENSE.md)
 ![Platform](https://img.shields.io/badge/Platform-Windows-blue.svg)
 ![Game](https://img.shields.io/badge/Game-Skyrim_SE/VR-blue.svg)
-[![Release](https://img.shields.io/badge/Release-2.1.1-blue.svg)](https://www.nexusmods.com/skyrimspecialedition/mods/117661)
+[![Release](https://img.shields.io/badge/Release-2.2.0-blue.svg)](https://www.nexusmods.com/skyrimspecialedition/mods/117661)
 
-Modern Wait Menu is a complete overhaul and redesign of Skyrims Wait & Rest Menu inspired by modern UI elements in games like Cyberpunk 2077 and The Witcher 3.
-This Repository contains all the source code for this mod, including the dll source code, as well as flash elements.
+Modern Wait Menu is a complete overhaul and redesign of Skyrim's Wait & Rest Menu, inspired by modern UI elements in games like Cyberpunk 2077 and The Witcher 3.
 
-The release version you can download on [Nexus Mods](https://www.nexusmods.com/skyrimspecialedition/mods/117661).
+This repository contains everything for this mod, including the DLL source code and the Flash files. To **download and play** the mod, get it on [Nexus Mods](https://www.nexusmods.com/skyrimspecialedition/mods/117661).
 
-> [!Note]
+> [!NOTE]
 > **A Note from the Author:**
-> I do not believe in elitism in programming. If you have any questions about my code, licensing or anything else, please do not hesitate to reach out, I am always happy to help! You can contact me via Nexus Mods, Discord, GitHub, or any other platform where I am active. Remember, we all start somewhere, and there are no wrong questions.
+> I do not believe in elitism in programming. If you have any questions about my code, licensing or anything else, please do not hesitate to reach out, I am always happy to help! You can contact me through the Nexus Mods comments or on my Discord server (see [Contact](#contact) below). Remember, we all start somewhere, and there are no wrong questions.
 
----
+## Features
 
-## 🛠 Features
-- Complete UI redesign to Skyrims wait menu
-- Dynamic Weather indicator (compatible with all weather mods)
-- 'Current Time' to 'Destination Time' text when selecting a time
-- Current in game date displayed in the UI
-- New hoverable cursor indicator
-- Full Controller support (Left stick, D-Pad left/right and LB/RB to set the wait time)
-- Day waiting up to 32 days.
-- Customizable Date String via ini
+- Complete redesign of the wait menu
+- Dynamic weather indicator, compatible with all weather mods
+- Current time and destination time while selecting
+- Full controller support
+- Waiting up to 32 days
 - Available in English and German
 
----
+The full feature list is on the [Nexus Mods page](https://www.nexusmods.com/skyrimspecialedition/mods/117661).
 
-## 📂 Repository Structure
-- `.data\DLL\src` and `.data\DLL\Include`: Contain all C++ headers and source files for the SKSE Plugin.
-- `.data\Flash`: Contains all the .fla and .as files for the Menus
-- `Interface\`: Compiled menu files in .swf format.
-- `Interface\Translations`: SKSE Translation files for the mod.
--  `SKSE\`: The compiled .dll and the .ini file for it.
-- `.data\DLL\xmake.lua`: The Project build configuration file.
-- `.data\DLL\Generate Project.bat`: Project build automation script, clears cache as well as building the Visual Studio Solutions.
-- `update_submodules.bat`: Helper script to keep dependencies up to date.
-- `pack_mod.csx`: C# script for automate mod packaging.
+## Building from Source
 
----
+This repository always contains the **complete working environment**: all source files, dependencies (as submodules), and scripts. If you have the tools below, you can build everything yourself.
 
-## 💻 Developer Guide (Building from Source)
+### Requirements
 
-This repository contains the full source code for transparency and review. The project utilizes a custom xmake and .NET build system. If you wish to contribute via Pull Requests, please contact me directly for build setup instructions.
+| Tool | Used for | Needed |
+| --- | --- | --- |
+| Git or GitHub Desktop | Cloning the repository | Always |
+| .NET SDK and [dotnet-script](https://github.com/dotnet-script/dotnet-script) | Running `pack_mod.csx` to package the mod | For packaging |
+| Visual Studio 2026 (version 18) with the **Desktop development with C++** workload | Building the DLL | Only if the repository contains a DLL |
+| CMake | Building the DLL | Only if the repository contains a DLL |
+| Python | Building the DLL | Only if the repository contains a DLL |
+| Adobe Flash CS6 | Editing the `.fla` menu files | Only to edit the menus |
 
-> [!Note]
-> I might add a detailed step-by-step guide at some point. However, I refuse to write a guide that can only be followed by an elitist group. If I create a guide, it will be designed so that anyone can understand it, even new programmers without extensive experience.
+### Steps
 
----
+1. **Clone** the repository.
+2. **Run `update_submodules.bat` right after cloning.** This downloads the dependencies. Nothing will build without it.
+3. **Build the DLL:** open the `source\DLL` folder in Visual Studio and let CMake run. With all requirements installed, it should build without further setup.
+4. **Package the mod:** run `pack_mod.csx` with dotnet-script.
 
-## 📜 License & Terms of Use
+### About the Flash files
 
-This project is **Proprietary**. All rights reserved by **Fallen011[35]** (2026).
-To check the license and what I permit here: [License](https://github.com/Fallen01135/mod.Skyrim.Modern-Wait-Menu/blob/main/LICENSE)
+The compiled menus (`.swf`) are already included, so you do **not** need Flash to build or package the mod. You only need Adobe Flash CS6 to edit the `.fla` and `.as` source files. Adobe no longer sells it, so I unfortunately cannot give a setup guide for this part.
 
-For bug fixes, optimizations, or feature suggestions, please submit a **Pull Request** or reach out directly. See the full [License](https://github.com/Fallen01135/mod.Skyrim.Modern-Wait-Menu/blob/main/LICENSE) file for details.
+If something does not work, ask me. I am happy to help, and your feedback helps me improve this guide.
+
+## Contact
+
+My official channels are:
+
+- **Nexus Mods:** [comments on the mod page](https://www.nexusmods.com/skyrimspecialedition/mods/117661?tab=posts)
+- **Discord:** [my Discord server](https://discord.gg/c99MyyPzhJ)
+
+Questions, permission requests, and everything else go there. GitHub issues are for **bug reports only**.
+
+## License
+
+This project is **source-available, not open source**. Copyright © 2026 **Fallen01135**. All rights reserved.
+
+In short: you may look at the code, learn from it, and make patches, translations and add-ons that require this mod. You may not re-upload the mod, distribute the DLL, sell it, or port it. The full terms in [LICENSE.md](LICENSE.md) are what counts.
+
+Bug fixes, optimizations, and feature suggestions are welcome as **Pull Requests**. Please do not publish your own builds or releases.
+
+If the project is ever abandoned, it becomes open source under the MPL-2.0 after a defined process. The details are in the [LICENSE.md](LICENSE.md).
+
+This project uses third-party libraries under their own licenses. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

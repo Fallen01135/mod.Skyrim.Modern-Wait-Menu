@@ -1,0 +1,14 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "modern-wait-menu",
+  "builtin-baseline": "33d78c1ed898a06938f31312167c7abefd229455",
+  "dependencies": [
+    "boost-stl-interfaces",
+    "boost-algorithm",
+    "boost-filesystem",
+    "nlohmann-json",
+    "rsm-binary-io",
+    "simpleini",
+    "spdlog"
+  ]
+}
