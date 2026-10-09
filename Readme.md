@@ -13,7 +13,12 @@ This repository contains everything for this mod, including the DLL source code 
 > **A Note from the Author:**
 > I do not believe in elitism in programming. If you have any questions about my code, licensing or anything else, please do not hesitate to reach out, I am always happy to help! You can contact me through the Nexus Mods comments or on my Discord server (see [Contact](#contact) below). Remember, we all start somewhere, and there are no wrong questions.
 
+
 ## Features
+
+<p align="center">
+  <img src="source/Media/Wait_Menu_Preview.png" alt="Modern Wait Menu in-game screenshot" width="1000">
+</p>
 
 - Complete redesign of the wait menu
 - Dynamic weather indicator, compatible with all weather mods
@@ -24,9 +29,11 @@ This repository contains everything for this mod, including the DLL source code 
 
 The full feature list is on the [Nexus Mods page](https://www.nexusmods.com/skyrimspecialedition/mods/117661).
 
+
 ## Building from Source
 
 This repository always contains the **complete working environment**: all source files, dependencies (as submodules), and scripts. If you have the tools below, you can build everything yourself.
+
 
 ### Requirements
 
@@ -39,6 +46,7 @@ This repository always contains the **complete working environment**: all source
 | Python | Building the DLL | Only if the repository contains a DLL |
 | Adobe Flash CS6 | Editing the `.fla` menu files | Only to edit the menus |
 
+
 ### Steps
 
 1. **Clone** the repository.
@@ -46,11 +54,13 @@ This repository always contains the **complete working environment**: all source
 3. **Build the DLL:** open the `source\DLL` folder in Visual Studio and let CMake run. With all requirements installed, it should build without further setup.
 4. **Package the mod:** run `pack_mod.csx` with dotnet-script.
 
+
 ### About the Flash files
 
 The compiled menus (`.swf`) are already included, so you do **not** need Flash to build or package the mod. You only need Adobe Flash CS6 to edit the `.fla` and `.as` source files. Adobe no longer sells it, so I unfortunately cannot give a setup guide for this part.
 
 If something does not work, ask me. I am happy to help, and your feedback helps me improve this guide.
+
 
 ## Contact
 
@@ -60,6 +70,12 @@ My official channels are:
 - **Discord:** [my Discord server](https://discord.gg/c99MyyPzhJ)
 
 Questions, permission requests, and everything else go there. GitHub issues are for **bug reports only**.
+
+
+## Credits
+
+- [HeavyBurns](https://www.nexusmods.com/skyrimspecialedition/users/91502233) for the idea and the artwork. Check out his [YouTube channel](https://www.youtube.com/@HeavyBurns/videos) for more Bethesda-related content.
+
 
 ## License
 

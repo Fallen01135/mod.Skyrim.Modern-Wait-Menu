@@ -1,0 +1,85 @@
+name: Bug report
+description: Create a bug report
+title: "[Bug]: "
+labels: ["bug"]
+assignees:
+  - Fallen01135
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the information below.
+        *Remember: GitHub Issues are for bug reports only.*
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you submit
+      options:
+        - label: I am using the latest official release from the official mod page, with no modified or self-built files.
+          required: true
+        - label: This is a bug report, not a question or a suggestion.
+          required: true
+
+  - type: dropdown
+    id: game-version
+    attributes:
+      label: Game Version
+      description: Which Skyrim version are you using?
+      options:
+        - "SE (1.5.97)"
+        - "SE (1.6.629+)"
+        - "SE (1.7.104+)"
+        - "VR"
+    validations:
+      required: true
+
+  - type: input
+    id: mod-version
+    attributes:
+      label: Mod Version
+      description: Which version of Modern Wait Menu is installed?
+      placeholder: "1.0.0"
+    validations:
+      required: true
+
+  - type: input
+    id: skse_version
+    attributes:
+      label: SKSE version
+
+  - type: textarea
+    id: what_happened
+    attributes:
+      label: What happened?
+      description: Describe the problem. Screenshots are welcome.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: false
+
+  - type: textarea
+    id: crash-log
+    attributes:
+      label: Crash Log
+      description: |
+        Please **attach your crash log file** (.txt or .log from Crash Logger) by dragging and dropping it into this field.
+      placeholder: Drag and drop your log file here...
+    validations:
+      required: false

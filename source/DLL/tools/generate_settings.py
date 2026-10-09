@@ -1,5 +1,8 @@
 # Copyright (c) 2026 Fallen01135. All rights reserved.
 # Licensed under the Fallen01135 Mod License (see LICENSE.md).
+#
+# Note: This code was generated with the assistance of AI (Gemini, Claude)
+# and was revised and fixed by me.
 
 #!/usr/bin/env python3
 """Generate a C++ settings header from a TSV definition.
