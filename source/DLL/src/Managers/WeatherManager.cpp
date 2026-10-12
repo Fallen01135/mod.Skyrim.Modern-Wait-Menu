@@ -15,12 +15,12 @@ namespace ModernWaitMenu
 	{
 		// Retrieve the current sky
 		auto sky = RE::Sky::GetSingleton();
-		if (!sky)
+		if (sky == nullptr)
 			return;
 
 		// Retrieve the current weather
 		auto currentWeather = sky->currentWeather;
-		if (!currentWeather)
+		if (currentWeather == nullptr)
 			return;
 
 		/*

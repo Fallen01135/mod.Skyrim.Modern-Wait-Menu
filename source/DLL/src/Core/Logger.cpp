@@ -18,7 +18,7 @@ namespace ModernWaitMenu
 	void Logger::Init()
 	{
 		auto logsFolder = SKSE::log::log_directory();
-		if (!logsFolder)
+		if (!logsFolder.has_value())
 			SKSE::stl::report_and_fail("Failed to find standard logging directory");
 
 		auto pluginName = Plugin::NAME;

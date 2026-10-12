@@ -12,15 +12,15 @@ namespace ModernWaitMenu
 {	
 	void CursorEvents::ShowMouseCursor(const SKSE::ModCallbackEvent *event)
 	{
-		if (!event)
+		if (event == nullptr)
 			return;
 
 		auto ui = RE::UI::GetSingleton();
-		if (!ui || !ui->IsMenuOpen("Cursor Menu"))
+		if (ui == nullptr || !ui->IsMenuOpen("Cursor Menu"))
 			return;
 
 		auto menu = ui->GetMenu("Cursor Menu");
-		if (!menu || !menu->uiMovie)
+		if (menu == nullptr || !menu->uiMovie)
 			return;
 
 		auto view = menu->uiMovie.get();

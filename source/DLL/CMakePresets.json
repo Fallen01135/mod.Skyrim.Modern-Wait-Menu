@@ -1,23 +1,28 @@
 {
 	"version": 3,
-	"configurePresets": [
+	"configurePresets":
+	[
 		{
 			"name": "cmake-dev",
 			"hidden": true,
 			"binaryDir": "${sourceDir}/build",
-			"warnings": {
+			"warnings":
+			{
 				"dev": true,
 				"deprecated": true
 			},
-			"errors": {
+			"errors":
+			{
 				"deprecated": true
 			}
 		},
 		{
 			"name": "vcpkg",
 			"hidden": true,
-			"cacheVariables": {
-				"CMAKE_TOOLCHAIN_FILE": {
+			"cacheVariables":
+			{
+				"CMAKE_TOOLCHAIN_FILE":
+				{
 					"type": "STRING",
 					"value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
 				}
@@ -27,24 +32,15 @@
 			"name": "windows",
 			"hidden": true,
 			"cacheVariables": {
-				"CMAKE_MSVC_RUNTIME_LIBRARY": {
+				"CMAKE_MSVC_RUNTIME_LIBRARY":
+				{
 					"type": "STRING",
 					"value": "MultiThreaded$<$<CONFIG:Debug>:Debug>"
 				},
-				"VCPKG_TARGET_TRIPLET": {
+				"VCPKG_TARGET_TRIPLET":
+				{
 					"type": "STRING",
 					"value": "x64-windows-static"
-				}
-			}
-		},
-		{
-			"name": "vr",
-			"hidden": true,
-			"binaryDir": "${sourceDir}/build-vr",
-			"cacheVariables": {
-				"BUILD_SKYRIMVR": {
-					"type": "BOOL",
-					"value": "ON"
 				}
 			}
 		},
@@ -52,47 +48,34 @@
 			"name": "vs2026-windows",
 			"generator": "Visual Studio 18 2026",
 			"toolset": "v145",
-			"architecture": {
+			"architecture":
+			{
 				"value": "x64",
 				"strategy": "set"
 			},
-			"cacheVariables": {
+			"cacheVariables":
+			{
 				"CMAKE_CXX_FLAGS": "/EHsc /MP /W4",
 				"CMAKE_CXX_FLAGS_RELEASE": "/O2 /DNDEBUG"
 			},
-			"inherits": [
+			"inherits":
+			[
 				"cmake-dev",
 				"vcpkg",
 				"windows"
 			]
-		},
-		{
-			"name": "vs2026-windows-vr",
-			"inherits": [
-				"vr",
-				"vs2026-windows"
-			]
 		}
 	],
-	"buildPresets": [
+	"buildPresets":
+	[
 		{
-			"name": "vs2026-windows-release",
+			"name": "Release",
 			"configurePreset": "vs2026-windows",
 			"configuration": "Release"
 		},
 		{
-			"name": "vs2026-windows-debug",
+			"name": "Debug",
 			"configurePreset": "vs2026-windows",
-			"configuration": "Debug"
-		},
-		{
-			"name": "vs2026-windows-vr-release",
-			"configurePreset": "vs2026-windows-vr",
-			"configuration": "Release"
-		},
-		{
-			"name": "vs2026-windows-vr-debug",
-			"configurePreset": "vs2026-windows-vr",
 			"configuration": "Debug"
 		}
 	]

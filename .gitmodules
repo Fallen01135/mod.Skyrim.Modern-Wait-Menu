@@ -1,12 +1,11 @@
-[submodule "source/DLL/extern/CommonLibSSE"]
-	path = source/DLL/extern/CommonLibSSE
-	url = https://github.com/Exit-9B/CommonLibSSE.git
-[submodule "source/DLL/extern/SKSE-CMakeModules"]
-	path = source/DLL/extern/SKSE-CMakeModules
-	url = https://github.com/Exit-9B/SKSE-CMakeModules.git
-[submodule "source/DLL/extern/CommonLibSSE-NG"]
-	path = source/DLL/extern/CommonLibSSE-NG
-	url = https://github.com/CharmedBaryon/CommonLibSSE-NG.git
 [submodule "source/Flash/extern/library-ActionScript2-Skyrim"]
 	path = source/Flash/extern/library-ActionScript2-Skyrim
 	url = https://github.com/Fallen01135/library-ActionScript2-Skyrim.git
+[submodule "source/DLL/extern/SKSE-CMakeModules"]
+	path = source/DLL/extern/SKSE-CMakeModules
+	url = https://github.com/Exit-9B/SKSE-CMakeModules.git
+	branch = main
+[submodule "source/DLL/extern/CommonLibSSE-NG"]
+	path = source/DLL/extern/CommonLibSSE-NG
+	url = https://github.com/Fallen01135/CommonLibSSE-NG.git
+	branch = main

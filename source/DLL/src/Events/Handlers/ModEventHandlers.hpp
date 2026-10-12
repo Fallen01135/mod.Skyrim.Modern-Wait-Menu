@@ -9,14 +9,9 @@
 #include <unordered_map>
 
 
-using EventHandler = void(*)(const SKSE::ModCallbackEvent *event);
-
-
 namespace ModernWaitMenu
 {
-	// --- Storage Container ---
-	static std::unordered_map<int, std::string> g_savedStorage;
-	// --- Storage Container end ---
+	using EventHandler = void(*)(const SKSE::ModCallbackEvent* event);
 
 	extern const std::unordered_map<std::string, EventHandler> eventMap;
 }

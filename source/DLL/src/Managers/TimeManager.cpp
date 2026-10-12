@@ -17,7 +17,7 @@ namespace ModernWaitMenu
 	{
 		// Retrieve the calender which holds all information about time and date.
 		RE::Calendar* calendar = RE::Calendar::GetSingleton();
-		if (!calendar || !calendar->gameHour)
+		if (calendar == nullptr || !calendar->gameHour)
 			return;
 
 		// Get the current time float and convert it to a more useable format

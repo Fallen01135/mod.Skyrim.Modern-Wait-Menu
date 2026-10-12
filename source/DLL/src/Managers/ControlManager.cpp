@@ -1,10 +1,10 @@
 // Copyright (c) 2026 Fallen01135. All rights reserved.
 // Licensed under the Fallen01135 Mod License (see LICENSE.md).
 
-#include "../Platform/Offset.hpp"
 #include "ControlManager.hpp"
 #include "RE/G/GFxMovieView.h"
 #include "RE/G/GFxValue.h"
+#include "RE/M/Misc.h"
 #include "Settings.hpp"
 #include "spdlog/spdlog.h"
 #include <cstdlib>
@@ -18,12 +18,20 @@ namespace ModernWaitMenu
 		auto idNew = static_cast<DPadType>(id);
 		switch (idNew)
 		{
-		case DPadType::up: i = 0; break;
-		case DPadType::down: i = 1; break;
-		case DPadType::left: i = 2; break;
-		case DPadType::right: i = 3; break;
-		default:
-			return;
+			case DPadType::up:
+				i = 0;
+				break;
+			case DPadType::down:
+				i = 1;
+				break;
+			case DPadType::left:
+				i = 2;
+				break;
+			case DPadType::right:
+				i = 3;
+				break;
+			default:
+				return;
 		}
 
 		if (states[i] != isDown)
@@ -66,8 +74,7 @@ namespace ModernWaitMenu
 		bool anyPressed = states != falseArray;
 		bool stateChanged = states != lastStates;
 
-		float seconds = *REL::Relocation<float*>(Offset::Time::FrameTimer.address()).get();
-		accumulator += seconds;
+		accumulator += RE::GetSecondsSinceLastFrame();
 
 		bool sendData = false;
 		if (stateChanged)

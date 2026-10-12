@@ -1,13 +1,10 @@
 // Copyright (c) 2026 Fallen01135. All rights reserved.
 // Licensed under the Fallen01135 Mod License (see LICENSE.md).
 
+#include "REL/Module.h"
 #include "Settings.hpp"
 #include "SettingsManager.hpp"
 #include "SimpleSettings.hpp"
-
-#ifdef SKYRIMVR
-#include "REL/Module.h"
-#endif
 
 
 namespace ModernWaitMenu
@@ -35,10 +32,7 @@ namespace ModernWaitMenu
 		spdlog::flush_on(level);
 #endif
 
-#ifdef SKYRIMVR
-		// Check if we are using VR or SE below 1.6
 		_isVR = REL::Module::get().GetRuntime() == REL::Module::Runtime::VR;
-#endif
 
 		SettingsLib::Dump<Settings>
 			(

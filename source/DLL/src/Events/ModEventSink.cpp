@@ -14,7 +14,7 @@ namespace ModernWaitMenu
 	RE::BSEventNotifyControl ModEventSink::ProcessEvent(const SKSE::ModCallbackEvent *a_event,
 		RE::BSTEventSource<SKSE::ModCallbackEvent> *)
 	{
-		if (a_event)
+		if (a_event != nullptr)
 		{
 			// This will check if the string we just recieced is found as a key in our eventMap
 			auto it = eventMap.find(a_event->eventName.c_str());

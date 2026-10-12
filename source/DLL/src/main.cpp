@@ -15,15 +15,7 @@
 #include "spdlog/spdlog.h"
 #include <fmt/format.h>
 
-/**
- * ATTENTION!
- * 
- * The Variable "SKYRIMVR" defines SE 1.5.97 AND VR versions
- * Therefore, everything marked in all cpp and hpp files with SKYRIMVR
- * is ALWAYS SE 1.5.97 AND VR
- */
-#ifndef SKYRIMVR
-// For Skyrim SE / AE
+
 extern "C" DLLEXPORT constinit auto SKSEPlugin_Version = []()
 {
 	SKSE::PluginVersionData v{};
@@ -38,9 +30,7 @@ extern "C" DLLEXPORT constinit auto SKSEPlugin_Version = []()
 
 	return v;
 }();
-#endif
 
-// For Skyrim VR
 extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Query(const SKSE::QueryInterface* a_skse, SKSE::PluginInfo* a_info)
 {
 	a_info->infoVersion = SKSE::PluginInfo::kVersion;
@@ -94,12 +84,14 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* sks
 	spdlog::info("Modern Wait Menu is loading...");
 	spdlog::info("{} v{}", Plugin::NAME.data(), Plugin::VERSION.string());
 
-	// Retrieve Settings and Initialize Hooks and Events
 	ModernWaitMenu::SettingsManager::Load();
 	spdlog::info("Settings loaded...");
 
+	if (skse->IsEditor())
+		return false;
+
 	auto messaging = SKSE::GetMessagingInterface();
-	if (messaging)
+	if (messaging != nullptr)
 	{
 		messaging->RegisterListener(SKSEMessageHandler);
 		spdlog::info("SKSE Message Handler registered...");

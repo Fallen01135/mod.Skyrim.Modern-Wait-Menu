@@ -492,7 +492,7 @@ class SleepWaitMenu extends MovieClip
 
 		Mouse[bShow ? "show" : "hide"]();
 		// Following triggers an event inside the DLL
-		skse.SendModEvent("MWMShowMouseCursor", "", bShow ? 1 : 0);
+		skse.SendModEvent("FTA_MWM_ShowMouseCursor", "", bShow ? 1 : 0);
 		cursor._alpha = bShow ? 0 : 100;
 	}
 

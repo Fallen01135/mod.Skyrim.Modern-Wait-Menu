@@ -9,10 +9,10 @@
 
 namespace ModernWaitMenu
 {
-	std::string tag = "MWM_";
+	constexpr std::string_view tag = "FTA_MWM_";
 
 	const std::unordered_map<std::string, EventHandler> eventMap =
 	{
-		{tag + "ShowMouseCursor", CursorEvents::ShowMouseCursor}
+		{std::string(tag) + "ShowMouseCursor", CursorEvents::ShowMouseCursor}
 	};
 }

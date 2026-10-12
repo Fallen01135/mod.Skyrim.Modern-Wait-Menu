@@ -1,17 +1,29 @@
 {
-	"zipName": "Modern Wait Menu.zip",
+	"zipName": "Modern Wait Menu {version}.zip",
 	"outputDir": "release",
-	"include": [
+	"version":
+	{
+		"file": "source/DLL/CMakeLists.txt"
+	},
+
+	"exclude":
+	[
+	],
+
+	"include":
+	[
 		"Interface",
 		"SKSE",
-		"ModernWaitMenu.esl"
-	],
-	"external": [
+		"LICENSE.md",
+		"THIRD_PARTY_NOTICES.md",
+
+		{
+			"from": "ModernWaitMenu.esl"
+		},
+
 		{
 			"root": "../AS2 Library",
-			"include": [
-				"Interface/Shared Elements/PlatformButtons.swf"
-			]
+			"from": "Interface/Shared Elements/PlatformButtons.swf"
 		}
 	]
 }

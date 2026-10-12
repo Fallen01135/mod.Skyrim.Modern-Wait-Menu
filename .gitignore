@@ -1,68 +1,60 @@
-# --- System ---
-# Windows
-[Tt]humbs.db
+# --- Windows ---
+Thumbs.db
 ehthumbs.db
-[Dd]esktop.ini
+Desktop.ini
 $RECYCLE.BIN/
-*.lnk
 
-# macOS
-.DS_Store
-.AppleDouble
-.LSOverride
-._*
-
-# --- IDEs & EDITORS ---
-# Visual Studio Code
+# --- VS Code ---
 .vscode/*
 !.vscode/extensions.json
 !.vscode/launch.json
-!.vscode/settings.json
-# IntelliJ / WebStorm / PyCharm
-.idea/
-*.iws
-*.iml
-# Visual Studio / Rider
+!.vscode/tasks.json
+
+# --- Visual Studio ---
 .vs/
 *.suo
 *.user
+*.userosscache
 
 # --- LOGS & TEMPORARY FILES ---
 *.log
-[Ll]ogs/
-*.swp
-*.bak
+logs/
 *.tmp
+*.temp
+*.bak
 .cache/
 
-# --- DEPENDENCIES ---
-# Node.js
-node_modules/
-jspm_packages/
-# Python
+# --- Python ---
 __pycache__/
-*.pyc
+*.py[cod]
 .venv/
 venv/
-env/
-# Java / Maven / Gradle
-target/
-.gradle/
-build/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
-# --- SECRET & CONFIGS ---
+# --- Java / Gradle ---
+.gradle/
+target/
+
+# --- Secret & Configs ---
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
+!.env.example
+!.env.sample
 *.pem
 *.key
+*.p12
+*.pfx
 
-/.data/DLL/.xmake
-/.data/DLL/vsxmake2026
+# --- Bethesda Game Related ---
+*.pex
+SKSE/Plugins/*.dll
+SKSE/Plugins/*.pdb
 
-SKSE/Plugins/Modern-Wait-Menu.dll
-SKSE/Plugins/Modern-Wait-Menu.pdb
-/release
+# -- Repository ---
+/source/DLL/.vs
+/source/DLL/build
 /source/DLL/generated
+/release

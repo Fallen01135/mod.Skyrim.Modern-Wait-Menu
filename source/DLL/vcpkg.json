@@ -9,6 +9,7 @@
     "nlohmann-json",
     "rsm-binary-io",
     "simpleini",
-    "spdlog"
+    "spdlog",
+    "rapidcsv"
   ]
 }

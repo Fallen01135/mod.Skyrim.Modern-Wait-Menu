@@ -274,7 +274,7 @@ namespace SettingsLib
 		{
 			const char *raw = ini.GetValue(def.info.section, def.info.key, nullptr);
 
-			if (raw)
+			if (raw != nullptr)
 				return stringToType<T>(std::string(raw));
 
 			return def.info.defaultValue;
@@ -311,7 +311,7 @@ namespace SettingsLib
 			if (readFile)
 			{
 				const char *raw = ini.GetValue(def.info.section, def.info.key, nullptr);
-				if (raw)
+				if (raw != nullptr)
 				{
 					def.value = split(raw, ',')
 						| std::views::transform([](const std::string &item) { return stringToType<T>(item); })

@@ -17,9 +17,9 @@ namespace ModernWaitMenu
 	RE::BSEventNotifyControl InputEventSink::ProcessEvent(RE::InputEvent *const *a_event,
 		RE::BSTEventSource<RE::InputEvent *> *)
 	{
-		if (a_event && *a_event && MenuManager::IsSleepWaitMenuOpen())
+		if (a_event != nullptr && *a_event && MenuManager::IsSleepWaitMenuOpen())
 		{
-			for (auto event = *a_event; event; event = event->next)
+			for (auto event = *a_event; event != nullptr; event = event->next)
 			{
 				auto type = event->GetEventType();
 				if (Settings::bActivateLeftStick && type == RE::INPUT_EVENT_TYPE::kThumbstick)

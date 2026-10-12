@@ -22,14 +22,14 @@ namespace ModernWaitMenu
 	RE::BSEventNotifyControl MenuEventSink::ProcessEvent(const RE::MenuOpenCloseEvent *a_event,
 		RE::BSTEventSource<RE::MenuOpenCloseEvent> *)
 	{
-		if (a_event && a_event->opening && a_event->menuName == RE::SleepWaitMenu::MENU_NAME)
+		if (a_event != nullptr && a_event->opening && a_event->menuName == RE::SleepWaitMenu::MENU_NAME)
 		{
 			// Retrieve the Menu
 			auto ui = RE::UI::GetSingleton();
 			auto menu = ui ? ui->GetMenu(RE::SleepWaitMenu::MENU_NAME) : nullptr;
 			auto view = menu ? menu->uiMovie.get() : nullptr;
 
-			if (view)
+			if (view != nullptr)
 			{
 				MenuManager::SetView(view);
 				ModernWaitMenu::SettingsManager::Load();
@@ -39,7 +39,7 @@ namespace ModernWaitMenu
 				auto gameSettings = RE::GameSettingCollection::GetSingleton();
 				std::string amStr = gameSettings ? gameSettings->GetSetting("sTimeAM")->GetString() : "AM";
 				std::string pmStr = gameSettings ? gameSettings->GetSetting("sTimePM")->GetString() : "PM";
-				if (!gameSettings)
+				if (gameSettings == nullptr)
 					spdlog::warn("Game Settings could not be loaded, using pre defined AM and PM instead.");
 
 				// This sets some variables inside of the ActionScript 2 code of the Menu
@@ -75,7 +75,7 @@ namespace ModernWaitMenu
 			else
 				spdlog::critical("SleepWaitMenu could not be found and opened!");
 		}
-		else if (a_event && !a_event->opening && a_event->menuName == RE::SleepWaitMenu::MENU_NAME)
+		else if (a_event != nullptr && !a_event->opening && a_event->menuName == RE::SleepWaitMenu::MENU_NAME)
 			MenuManager::SetView(nullptr);
 
 		return RE::BSEventNotifyControl::kContinue;

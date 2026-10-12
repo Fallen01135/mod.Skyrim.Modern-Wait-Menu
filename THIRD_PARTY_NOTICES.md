@@ -6,27 +6,22 @@ This project, by **Fallen01135**, uses the third-party components listed below. 
 
 | Component | Author / Maintainer | License | Source |
 | --- | --- | --- | --- |
-| CommonLibSSE-NG | CharmedBaryon (fork of powerof3/CommonLibSSE) | MIT | <https://github.com/CharmedBaryon/CommonLibSSE-NG> |
-| CommonLibSSE | Exit-9B (fork of Ryan-rsm-McKenzie/CommonLibSSE) | MIT | <https://github.com/Exit-9B/CommonLibSSE> |
+| CommonLibSSE-NG | Fallen01135 (fork of CharmedBaryon/CommonLibSSE-NG) | MIT | <https://github.com/Fallen01135/CommonLibSSE-NG> |
 | Boost | Boost contributors | Boost Software License 1.0 | <https://www.boost.org> |
 | nlohmann/json | Niels Lohmann | MIT | <https://github.com/nlohmann/json> |
 | SimpleIni | Brodie Thiesfield | MIT | <https://github.com/brofield/simpleini> |
 | spdlog | Gabi Melman | MIT | <https://github.com/gabime/spdlog> |
 | {fmt} (bundled with spdlog) | Victor Zverovich and contributors | MIT | <https://github.com/fmtlib/fmt> |
-| binary_io | Ryan-rsm-McKenzie | MIT | <https://github.com/Ryan-rsm-McKenzie/binary_io> |
 
 
 ## MIT License
 
-Applies to: CommonLibSSE, CommonLibSSE-NG, binary_io, nlohmann/json, SimpleIni, spdlog, {fmt}.
+Applies to: CommonLibSSE, CommonLibSSE-NG, nlohmann/json, SimpleIni, spdlog, {fmt}.
 
 Copyright notices:
 ```
-CommonLibSSE and CommonLibSSE-NG:
+CommonLibSSE-NG:
 Copyright (c) 2018 Ryan-rsm-McKenzie
-
-binary_io:
-Copyright (c) 2021 Ryan McKenzie
 
 nlohmann/json:
 Copyright (c) 2013-2026 Niels Lohmann
