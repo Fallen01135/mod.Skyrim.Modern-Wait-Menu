@@ -50,11 +50,13 @@ target/
 
 # --- Bethesda Game Related ---
 *.pex
+*.swf
 SKSE/Plugins/*.dll
 SKSE/Plugins/*.pdb
 
 # -- Repository ---
-/source/DLL/.vs
-/source/DLL/build
-/source/DLL/generated
-/release
+config/
+source/DLL/.vs
+source/DLL/build
+source/DLL/generated
+release/

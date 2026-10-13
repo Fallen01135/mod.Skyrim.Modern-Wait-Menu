@@ -40,7 +40,6 @@ This repository always contains the **complete working environment**: all source
 | Tool | Used for | Needed |
 | --- | --- | --- |
 | Git or GitHub Desktop | Cloning the repository | Always |
-| .NET SDK and [dotnet-script](https://github.com/dotnet-script/dotnet-script) | Running `pack_mod.csx` to package the mod | For packaging |
 | Visual Studio 2026 (version 18) with the **Desktop development with C++** workload | Building the DLL | Only if the repository contains a DLL |
 | CMake | Building the DLL | Only if the repository contains a DLL |
 | Python | Building the DLL | Only if the repository contains a DLL |
@@ -52,12 +51,11 @@ This repository always contains the **complete working environment**: all source
 1. **Clone** the repository.
 2. **Run `update_submodules.bat` right after cloning.** This downloads the dependencies. Nothing will build without it.
 3. **Build the DLL:** open the `source\DLL` folder in Visual Studio and let CMake run. With all requirements installed, it should build without further setup.
-4. **Package the mod:** run `pack_mod.csx` with dotnet-script.
 
 
 ### About the Flash files
 
-The compiled menus (`.swf`) are already included, so you do **not** need Flash to build or package the mod. You only need Adobe Flash CS6 to edit the `.fla` and `.as` source files. Adobe no longer sells it, so I unfortunately cannot give a setup guide for this part.
+You only need Adobe Flash CS6 to edit the `.fla` files. Adobe no longer sells it, so I unfortunately cannot give a setup guide for this part.
 
 If something does not work, ask me. I am happy to help, and your feedback helps me improve this guide.
 
