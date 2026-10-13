@@ -35,6 +35,8 @@ If you use anything the Work allows (snippets, patches, translations, add-ons), 
 
 My **official channels** are the comments on the project's official mod page (e.g. Nexus Mods) and my Discord server (links in the README or on the mod page). GitHub issues are for bug reports only and are not an official channel for this purpose.
 
+This clause does not apply if I explicitly declare the project as permanently discontinued or if I intentionally remove the official downloads and repository to sunset the project. In those cases, all rights remain fully reserved and no license change to MPL-2.0 will occur.
+
 If I die (as reasonably documented), or if **all** of the following happen, the project does not get lost:
 
 1. I have shown no activity (commits, releases, updates, posts, replies) on the repository or on any official channel for **6 months**.
